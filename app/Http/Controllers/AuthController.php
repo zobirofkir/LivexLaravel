@@ -20,30 +20,38 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'id_token' => 'required|string',
         ]);
 
-        $firebaseUser = $this->firebaseService->getUserByEmail($request->email);
-        
-        if (!$firebaseUser) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+        try {
+            $verifiedToken = $this->firebaseService->verifyIdToken($request->id_token);
+            
+            if (!$verifiedToken) {
+                return response()->json(['message' => 'Invalid Firebase token'], 401);
+            }
+
+            $uid = $verifiedToken->claims()->get('sub');
+            $email = $verifiedToken->claims()->get('email');
+            $name = $verifiedToken->claims()->get('name');
+
+            $user = User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'name' => $name ?? $email,
+                    'password' => bcrypt(uniqid()) 
+                ]
+            );
+
+            $token = $user->createToken('auth-token')->accessToken;
+
+            return response()->json([
+                'user' => $user,
+                'token' => $token
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Authentication failed'], 401);
         }
-
-        $user = User::firstOrCreate(
-            ['email' => $request->email],
-            [
-                'name' => $firebaseUser->displayName ?? $request->email,
-                'password' => bcrypt($request->password)
-            ]
-        );
-
-        $token = $user->createToken('auth-token')->accessToken;
-
-        return response()->json([
-            'user' => $user,
-            'token' => $token
-        ]);
     }
 
     public function user(Request $request)
@@ -55,16 +63,5 @@ class AuthController extends Controller
     {
         $request->user()->token()->revoke();
         return response()->json(['message' => 'Successfully logged out']);
-    }
-
-    public function refresh(Request $request)
-    {
-        $user = $request->user();
-        $user->token()->revoke();
-        $token = $user->createToken('auth-token')->accessToken;
-        
-        return response()->json([
-            'token' => $token
-        ]);
     }
 }
