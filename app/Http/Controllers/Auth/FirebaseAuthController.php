@@ -4,9 +4,18 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Services\FirebaseAuthService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use App\Models\User;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\SendOTPRequest;
+use App\Http\Requests\Auth\VerifyOTPRequest;
+use App\Http\Resources\Auth\FirebaseAuthResource;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use App\Http\Resources\SendLoginLinkResource;
+use App\Http\Resources\SendOtpResource;
+use App\Http\Resources\VerifyLoginResource;
+use App\Http\Resources\VerifyOtpResource;
+use App\Http\Resources\GetCurrentAuthUserResource;
 
 class FirebaseAuthController extends Controller
 {
@@ -17,39 +26,18 @@ class FirebaseAuthController extends Controller
         $this->firebaseAuth = $firebaseAuth;
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request): FirebaseAuthResource
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-            'name' => 'required|string',
-        ]);
+        $user = $this->firebaseAuth->createUser(
+            $request->email,
+            $request->password,
+            $request->name
+        );
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        try {
-            $user = $this->firebaseAuth->createUser(
-                $request->email,
-                $request->password,
-                $request->name
-            );
-
-            return response()->json([
-                'message' => 'User created successfully. Please check your email for verification.',
-                'user' => [
-                    'uid' => $user->uid,
-                    'email' => $user->email,
-                    'name' => $user->displayName,
-                ]
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
+        return FirebaseAuthResource::make($user);
     }
 
-    public function sendLoginLink(Request $request)
+    public function sendLoginLink(Request $request): SendLoginLinkResource
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
@@ -59,15 +47,11 @@ class FirebaseAuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        try {
-            $result = $this->firebaseAuth->sendSignInLink($request->email);
-            return response()->json($result);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
+        $result = $this->firebaseAuth->sendSignInLink($request->email);
+        return SendLoginLinkResource::make($result);
     }
 
-    public function verifyLogin(Request $request)
+    public function verifyLogin(Request $request): VerifyLoginResource
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
@@ -78,82 +62,31 @@ class FirebaseAuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        try {
-            $result = $this->firebaseAuth->verifySignInLink($request->email, $request->oobCode);
-            return response()->json($result);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
+        $result = $this->firebaseAuth->verifySignInLink($request->email, $request->oobCode);
+        return VerifyLoginResource::make($result);
     }
 
-    public function getUser(Request $request)
+    public function getUser(Request $request): GetCurrentAuthUserResource
     {
-        try {
-            $user = $request->user();
-            return response()->json([
-                'user' => [
-                    'id' => $user->id,
-                    'email' => $user->email,
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
+        $user = $request->user();
+        return GetCurrentAuthUserResource::make($user);
     }
 
-    public function sendOTP(Request $request)
+    public function sendOTP(SendOTPRequest $request): SendOtpResource
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        try {
-            $result = $this->firebaseAuth->sendOTP($request->email);
-            return response()->json($result);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
+        $result = $this->firebaseAuth->sendOTP($request->email);
+        return SendOtpResource::make($result);
     }
 
-    public function verifyOTP(Request $request)
+    public function verifyOTP(VerifyOTPRequest $request): VerifyOtpResource
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'otp' => 'required|string|min:6|max:6',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        try {
-            $result = $this->firebaseAuth->verifyOTP($request->email, $request->otp);
-            return response()->json($result);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
+        $result = $this->firebaseAuth->verifyOTP($request->email, $request->otp);
+        return VerifyOtpResource::make($result);
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request): LoginResource
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        try {
-            $result = $this->firebaseAuth->login($request->email, $request->password);
-            return response()->json($result);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
+        $result = $this->firebaseAuth->login($request->email, $request->password);
+        return LoginResource::make($result);
     }
 } 
