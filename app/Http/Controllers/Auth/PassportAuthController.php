@@ -11,11 +11,11 @@ use App\Http\Requests\Auth\VerifyLoginLinkRequest;
 use App\Http\Requests\Auth\VerifyOTPRequest;
 use App\Http\Resources\Auth\LoginResource;
 use App\Http\Resources\Auth\PassportAuthResource;
-use App\Http\Resources\SendLoginLinkResource;
-use App\Http\Resources\SendOtpResource;
-use App\Http\Resources\VerifyLoginResource;
-use App\Http\Resources\VerifyOtpResource;
-use App\Http\Resources\GetCurrentAuthUserResource;
+use App\Http\Resources\Auth\SendLoginLinkResource;
+use App\Http\Resources\Auth\SendOtpResource;
+use App\Http\Resources\Auth\VerifyLoginResource;
+use App\Http\Resources\Auth\VerifyOtpResource;
+use App\Http\Resources\Auth\GetCurrentAuthUserResource;
 
 class PassportAuthController extends Controller
 {

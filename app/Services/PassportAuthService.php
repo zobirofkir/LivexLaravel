@@ -126,16 +126,14 @@ class PassportAuthService
         $user = User::where('email', $validatedData['email'])->first();
 
         if (!$user || !Hash::check($validatedData['password'], $user->password)) {
-            throw new \Exception('Invalid credentials');
+            abort(401);
         }
 
-        $token = $user->createToken('Passport Token')->accessToken;
-        
         return [
-            'token' => $token,
             'user' => $user
         ];
     }
+
 
     protected function getOrCreateUser($email, $password = null)
     {
