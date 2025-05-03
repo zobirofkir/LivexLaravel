@@ -15,7 +15,7 @@ use App\Http\Requests\Auth\VerifyLoginLinkRequest;
 use App\Http\Requests\Auth\VerifyOTPRequest;
 use App\Http\Requests\Auth\LoginRequest;
 
-class PassportAuthService
+class AuthEmailService
 {
     public function createUser($email, $password, $name)
     {
