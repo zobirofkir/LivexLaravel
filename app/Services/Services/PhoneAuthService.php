@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Str;
+use Kreait\Firebase\Factory;
 
 class PhoneAuthService implements PhoneAuthConstructor
 {
@@ -28,11 +29,18 @@ class PhoneAuthService implements PhoneAuthConstructor
         $request->validated();
 
         $phone = $request->phone_number;
+
+        $factory = (new Factory)->withServiceAccount(storage_path('app/firebase-service-account.json'));
+        $auth = $factory->createAuth();
+
+        $user = $auth->getUserByPhoneNumber($phone);
+
+        $customToken = $auth->createCustomToken($user->uid);
+
         $otp = rand(100000, 999999);
-        
         Cache::put('otp_' . $phone, $otp, now()->addMinutes(5));
 
-        return PhoneAuthResource::make($otp);
+        return PhoneAuthResource::make(['otp' => $otp]);
     }
 
     /**
