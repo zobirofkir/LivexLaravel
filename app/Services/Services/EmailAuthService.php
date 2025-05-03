@@ -4,19 +4,12 @@ namespace App\Services\Services;
 
 use App\Services\Auth\AuthEmailService;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\SendLoginLinkRequest;
-use App\Http\Requests\Auth\VerifyLoginLinkRequest;
 use App\Http\Requests\Auth\VerifyOTPRequest;
 use App\Http\Resources\Auth\LoginResource;
-use App\Http\Resources\Auth\PassportAuthResource;
-use App\Http\Resources\Auth\SendLoginLinkResource;
 use App\Http\Resources\Auth\SendOtpResource;
-use App\Http\Resources\Auth\VerifyLoginResource;
 use App\Http\Resources\Auth\VerifyOtpResource;
-use App\Http\Resources\Auth\GetCurrentAuthUserResource;
 use App\Services\Constructors\EmailAuthConstructor;
-use Illuminate\Support\Facades\Auth;
 
 class EmailAuthService implements EmailAuthConstructor
 {
@@ -32,16 +25,6 @@ class EmailAuthService implements EmailAuthConstructor
     public function __construct(AuthEmailService $authService)
     {
         $this->authService = $authService;
-    }
-
-    /**
-     * Get the current authenticated user.
-     * @return GetCurrentAuthUserResource
-     */
-    public function getUser(): GetCurrentAuthUserResource
-    {
-        $user = Auth::user();
-        return GetCurrentAuthUserResource::make($user);
     }
 
     /**
@@ -67,9 +50,9 @@ class EmailAuthService implements EmailAuthConstructor
     }
 
     /**
-     * Register a new user.
-     * @param RegisterRequest $request
-     * @return PassportAuthResource
+     * Login the user using the provided credentials.
+     * @param LoginRequest $request
+     * @return LoginResource
      */
     public function login(LoginRequest $request): LoginResource
     {

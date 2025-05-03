@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\SendLoginLinkRequest;
 use App\Http\Requests\Auth\VerifyOTPRequest;
-use App\Http\Resources\Auth\GetCurrentAuthUserResource;
 use App\Http\Resources\Auth\LoginResource;
 use App\Http\Resources\Auth\SendOtpResource;
 use App\Http\Resources\Auth\VerifyOtpResource;
@@ -14,15 +13,6 @@ use App\Services\Facades\EmailAuthFacade;
 
 class EmailAuthController extends Controller
 {
-    /**
-     * Get the authenticated user.
-     * @return GetCurrentAuthUserResource
-     */
-    public function getUser(): GetCurrentAuthUserResource
-    {
-        return EmailAuthFacade::getUser();
-    }
-
     /**
      * Send OTP to the user.
      * @param SendLoginLinkRequest $request
