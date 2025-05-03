@@ -13,12 +13,6 @@ use App\Http\Resources\Auth\VerifyOtpResource;
 interface EmailAuthConstructor
 {
     /**
-     * Get the authenticated user.
-     * @return GetCurrentAuthUserResource
-     */
-    public function getUser(): GetCurrentAuthUserResource;
-
-    /**
      * Send OTP to the user.
      * @param SendLoginLinkRequest $request
      * @return SendOtpResource
