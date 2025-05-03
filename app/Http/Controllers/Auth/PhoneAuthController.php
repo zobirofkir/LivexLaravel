@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\PhoneAuthRequest;
+use App\Http\Resources\Auth\PhoneAuthResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
@@ -12,21 +14,16 @@ use Illuminate\Support\Str;
 
 class PhoneAuthController extends Controller
 {
-    public function sendOTP(Request $request)
+    public function sendOTP(PhoneAuthRequest $request)
     {
-        $request->validate([
-            'phone_number' => 'required|string|min:10|max:15'
-        ]);
+        $request->validated();
 
         $phone = $request->phone_number;
         $otp = rand(100000, 999999);
         
         Cache::put('otp_' . $phone, $otp, now()->addMinutes(5));
 
-        return response()->json([
-            'message' => 'OTP sent successfully',
-            'otp' => $otp 
-        ]);
+        return PhoneAuthResource::make($otp);
     }
 
     public function verifyOTP(Request $request)
