@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\PhoneAuthLoginRequest;
 use App\Http\Requests\Auth\PhoneAuthRequest;
 use App\Http\Requests\Auth\VerifyPhoneOtpRequest;
+use App\Http\Resources\Auth\PhoneAuthLoginResource;
 use App\Http\Resources\Auth\PhoneAuthResource;
 use App\Http\Resources\Auth\VerifyPhoneOtpResource;
 use Illuminate\Http\Request;
@@ -55,30 +57,19 @@ class PhoneAuthController extends Controller
             ]
         );
 
-        return VerifyPhoneOtpResource::make($user);
+        return VerifyPhoneOtpResource::make($password);
     }
 
-    public function login(Request $request)
+    public function login(PhoneAuthLoginRequest $request)
     {
-        $request->validate([
-            'phone_number' => 'required|string|min:10|max:15',
-            'password' => 'required|string'
-        ]);
+        $request->validated();
 
         $user = User::where('phone_number', $request->phone_number)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'message' => 'Invalid credentials'
-            ], 401);
+            abort(401);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user
-        ]);
+        return PhoneAuthLoginResource::make($user);
     }
 }
