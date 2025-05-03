@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\PhoneAuthRequest;
+use App\Http\Requests\Auth\VerifyPhoneOtpRequest;
 use App\Http\Resources\Auth\PhoneAuthResource;
+use App\Http\Resources\Auth\VerifyPhoneOtpResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
@@ -26,12 +28,9 @@ class PhoneAuthController extends Controller
         return PhoneAuthResource::make($otp);
     }
 
-    public function verifyOTP(Request $request)
+    public function verifyOTP(VerifyPhoneOtpRequest $request)
     {
-        $request->validate([
-            'phone_number' => 'required|string|min:10|max:15',
-            'otp' => 'required|numeric|digits:6'
-        ]);
+        $request->validated();
 
         $phone = $request->phone_number;
         $otp = $request->otp;
@@ -56,10 +55,7 @@ class PhoneAuthController extends Controller
             ]
         );
 
-        return response()->json([
-            'message' => 'OTP verified successfully',
-            'password' => $password
-        ]);
+        return VerifyPhoneOtpResource::make($user);
     }
 
     public function login(Request $request)
