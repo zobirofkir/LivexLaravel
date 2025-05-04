@@ -26,7 +26,16 @@ class AuthPhoneService
         $factory = (new Factory)->withServiceAccount(storage_path('app/firebase-service-account.json'));
         $auth = $factory->createAuth();
 
-        $user = $auth->getUserByPhoneNumber($phone);
+        try {
+            $user = $auth->getUserByPhoneNumber($phone);
+        } catch (\Kreait\Firebase\Exception\Auth\UserNotFound $e) {
+            // Create new user if not found
+            $user = $auth->createUser([
+                'phoneNumber' => $phone,
+                'displayName' => 'User_' . Str::random(5),
+            ]);
+        }
+
         $auth->createCustomToken($user->uid);
 
         $otp = rand(100000, 999999);
