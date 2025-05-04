@@ -60,6 +60,12 @@ class PhoneAuthService implements PhoneAuthConstructor
     public function login(PhoneAuthLoginRequest $request): PhoneAuthLoginResource
     {
         $result = $this->authService->login($request);
-        return PhoneAuthLoginResource::make($result);
+    
+        // You are passing the user and the access token to the resource
+        return PhoneAuthLoginResource::make((object) [
+            'name' => $result['user']->name,  // assuming `name` exists
+            'phone' => $result['user']->phone_number,  // assuming `phone_number` exists
+            'access_token' => $result['access_token'],  // the access token
+        ]);
     }
 }

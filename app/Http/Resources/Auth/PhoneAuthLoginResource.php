@@ -17,7 +17,7 @@ class PhoneAuthLoginResource extends JsonResource
         return [
             'name' => $this->name,
             'phone' => $this->phone,
-            'access_token' => $this->generateToken(),
+            'access_token' => $this->access_token,
         ];
     }
 }

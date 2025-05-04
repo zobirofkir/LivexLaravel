@@ -115,14 +115,17 @@ class AuthPhoneService
     public function login(PhoneAuthLoginRequest $request): array
     {
         $user = User::where('phone_number', $request->phone_number)->first();
-
+    
         if (!$user || !Hash::check($request->password, $user->password)) {
             return [
                 'message' => 'Invalid credentials',
                 'status' => 401
             ];
         }
-
-        return ['user' => $user];
+        
+        return [
+            'user' => $user,
+            'access_token' => $user->generateToken(),
+        ];
     }
 } 
