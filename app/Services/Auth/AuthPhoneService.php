@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Kreait\Firebase\Factory;
+use Twilio\Rest\Client;
 
 class AuthPhoneService
 {
@@ -22,25 +23,30 @@ class AuthPhoneService
     public function sendOTP(PhoneAuthRequest $request): array
     {
         $phone = $request->phone_number;
-
+    
         $factory = (new Factory)->withServiceAccount(storage_path('app/firebase-service-account.json'));
         $auth = $factory->createAuth();
-
+    
         try {
             $user = $auth->getUserByPhoneNumber($phone);
         } catch (\Kreait\Firebase\Exception\Auth\UserNotFound $e) {
-            // Create new user if not found
             $user = $auth->createUser([
                 'phoneNumber' => $phone,
                 'displayName' => 'User_' . Str::random(5),
             ]);
         }
-
+    
         $auth->createCustomToken($user->uid);
-
+    
         $otp = rand(100000, 999999);
         Cache::put('otp_' . $phone, $otp, now()->addMinutes(5));
-
+    
+        $twilio = new Client(env('TWILIO_SID'), env('TWILIO_TOKEN'));
+        $twilio->messages->create($phone, [
+            'from' => env('TWILIO_FROM'),
+            'body' => "Your verification code is: {$otp}"
+        ]);
+    
         return ['otp' => $otp];
     }
 
