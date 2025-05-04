@@ -61,18 +61,18 @@ class AuthPhoneService
         $phone = $request->phone_number;
         $otp = $request->otp;
         $storedOTP = Cache::get('otp_' . $phone);
-
+    
         if (!$storedOTP || $storedOTP != $otp) {
             return [
                 'message' => 'Invalid OTP',
                 'status' => 422
             ];
         }
-
+    
         Cache::forget('otp_' . $phone);
-
+    
         $password = 'user' . rand(10000, 99999);
-
+    
         $user = User::updateOrCreate(
             ['phone_number' => $phone],
             [
@@ -81,7 +81,28 @@ class AuthPhoneService
                 'email' => $phone . '@phone.com'
             ]
         );
-
+    
+        $sid    = env('TWILIO_SID');
+        $token  = env('TWILIO_TOKEN');
+        $from   = env('TWILIO_FROM');
+    
+        $twilio = new Client($sid, $token);
+    
+        try {
+            $twilio->messages->create(
+                $phone,
+                [
+                    'from' => $from,
+                    'body' => "Your password is: {$password}"
+                ]
+            );
+        } catch (\Exception $e) {
+            return [
+                'message' => 'User created but SMS failed: ' . $e->getMessage(),
+                'status' => 500
+            ];
+        }
+    
         return ['password' => $password];
     }
 
