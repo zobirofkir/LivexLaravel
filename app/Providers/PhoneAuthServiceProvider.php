@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\Services\PhoneAuthService;
+use App\Services\Auth\AuthPhoneService;
 use Illuminate\Support\ServiceProvider;
 
 class PhoneAuthServiceProvider extends ServiceProvider
@@ -13,7 +14,9 @@ class PhoneAuthServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton("PhoneAuthService", function($app) {
-            return new PhoneAuthService();
+            return new PhoneAuthService(
+                $this->app->make(AuthPhoneService::class)
+            );
         });
     }
 
