@@ -28,4 +28,14 @@ class UserController extends Controller
 
         return UserResource::make($user->load('profile'));
     }
+
+    /**
+     * Get the authenticated user's information.
+     */
+    public function getCurrentUser()
+    {
+        $user = Auth::user();
+
+        return UserResource::make($user->load('profile'));
+    }
 }
