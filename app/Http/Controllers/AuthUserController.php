@@ -7,35 +7,27 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\Facades\AuthUserFacade;
 
 class AuthUserController extends Controller
 {
     /**
      * Update the authenticated user's information.
+     * @param UpdateUserRequest $request
+     * @return UserResource
      */
-    public function update(UpdateUserRequest $request)
+    public function update(UpdateUserRequest $request): UserResource
     {
-        $user = Auth::user();
-
-        $validatedData = $request->validated();
-
-        $user->update($validatedData);
-
-        if ($user->profile) {
-            $user->profile->update($validatedData);
-        } else {
-            $user->profile()->create($validatedData);
-        }
-
-        return UserResource::make($user->load('profile'));
+        return AuthUserFacade::update($request);
     }
 
     /**
      * Get the authenticated user's information.
+     * @return UserResource
      */
-    public function show()
+    public function show(): UserResource
     {
-        $auth = Auth::user();
-        return UserResource::make($auth->load('profile'));
+        return AuthUserFacade::show();
     }
+
 }
