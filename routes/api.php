@@ -1,14 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthUserController;
 
-Route::middleware('auth:api')->prefix('auth/user')->group(function () {
-    Route::put('/update', [AuthUserController::class, 'update']);
-    Route::get('/current', [AuthUserController::class, 'show']);
-
-    Route::post('/logout', [AuthUserController::class, 'logout']);
-    
-});
-
+require __DIR__.'/auth/authenticated.php';
 require __DIR__.'/auth/mail.php';
 require __DIR__.'/auth/phone.php';
