@@ -4,7 +4,7 @@ use App\Http\Controllers\UserController;
 
 Route::middleware('auth:api')->prefix('auth/user')->group(function () {
     Route::put('/update', [UserController::class, 'update']);
-    Route::get('/current', [UserController::class, 'getCurrentUser']);
+    Route::get('/current', [UserController::class, 'show']);
 });
 
 require __DIR__.'/auth/mail.php';

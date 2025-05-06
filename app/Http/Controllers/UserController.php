@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -32,10 +33,9 @@ class UserController extends Controller
     /**
      * Get the authenticated user's information.
      */
-    public function getCurrentUser()
+    public function show()
     {
-        $user = Auth::user();
-
-        return UserResource::make($user->load('profile'));
+        $auth = Auth::user();
+        return UserResource::make($auth->load('profile'));
     }
 }
