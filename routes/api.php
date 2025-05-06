@@ -1,10 +1,10 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthUserController;
 
 Route::middleware('auth:api')->prefix('auth/user')->group(function () {
-    Route::put('/update', [UserController::class, 'update']);
-    Route::get('/current', [UserController::class, 'show']);
+    Route::put('/update', [AuthUserController::class, 'update']);
+    Route::get('/current', [AuthUserController::class, 'show']);
 });
 
 require __DIR__.'/auth/mail.php';

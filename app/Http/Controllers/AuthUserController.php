@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 
-class UserController extends Controller
+class AuthUserController extends Controller
 {
     /**
      * Update the authenticated user's information.
