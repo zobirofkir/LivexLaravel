@@ -20,6 +20,7 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'name' => 'string|max:255',
             'email' => 'email|unique:users,email,' . $this->user()->id,
             'phone_number' => 'string|max:15|nullable',

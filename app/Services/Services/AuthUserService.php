@@ -6,6 +6,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Services\Constructors\AuthUserConstructor;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AuthUserService implements AuthUserConstructor
 {
@@ -15,8 +16,14 @@ class AuthUserService implements AuthUserConstructor
     public function update(UpdateUserRequest $request): UserResource
     {
         $user = Auth::user();
-
         $validatedData = $request->validated();
+
+        if (isset($validatedData['profile_image']) && $validatedData['profile_image']) {
+            $imagePath = $validatedData['profile_image']->store('profile_images', 'public');
+            $validatedData['profile_image'] = $imagePath;
+        } else {
+            unset($validatedData['profile_image']);
+        }
 
         $user->update($validatedData);
 
