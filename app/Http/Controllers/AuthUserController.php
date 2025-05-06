@@ -30,4 +30,14 @@ class AuthUserController extends Controller
         return AuthUserFacade::show();
     }
 
+
+    /**
+     * Logout the authenticated user.
+     * @return bool
+     */
+    public function logout(): bool
+    {
+        return AuthUserFacade::logout();
+    }
+
 }

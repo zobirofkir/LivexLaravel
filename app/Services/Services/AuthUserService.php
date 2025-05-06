@@ -38,4 +38,13 @@ class AuthUserService implements AuthUserConstructor
         return UserResource::make($auth->load('profile'));
     }
 
+    /**
+     * Logout the authenticated user.
+     * @return bool
+     */
+    public function logout(): bool
+    {
+        return Auth::user()->token()->revoke();
+    }
+
 }

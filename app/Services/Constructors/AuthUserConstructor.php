@@ -19,4 +19,10 @@ interface AuthUserConstructor
      * @return UserResource
      */
     public function show(): UserResource;
+
+    /**
+     * Logout the authenticated user.
+     * @return bool
+     */
+    public function logout(): bool;
 }
