@@ -7,8 +7,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::prefix('/auth')->group(function() {
-    Route::post('/send-gmail-otp', [EmailAuthController::class, 'sendOTP']);
+Route::prefix('/auth/email')->group(function() {
+    Route::post('/send-otp', [EmailAuthController::class, 'sendOTP']);
     Route::post('/verify-otp', [EmailAuthController::class, 'verifyOTP']);
     Route::post('/login', [EmailAuthController::class, 'login']);
 });
