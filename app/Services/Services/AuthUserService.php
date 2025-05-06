@@ -7,6 +7,8 @@ use App\Http\Resources\UserResource;
 use App\Services\Constructors\AuthUserConstructor;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 
 class AuthUserService implements AuthUserConstructor
 {
@@ -17,22 +19,34 @@ class AuthUserService implements AuthUserConstructor
     {
         $user = Auth::user();
         $validatedData = $request->validated();
-
-        if (isset($validatedData['profile_image']) && $validatedData['profile_image']) {
+    
+        Log::info('Validated Data:', $validatedData); // تسجيل البيانات القادمة
+    
+        if (
+            isset($validatedData['profile_image']) &&
+            $validatedData['profile_image'] instanceof UploadedFile
+        ) {
             $imagePath = $validatedData['profile_image']->store('profile_images', 'public');
             $validatedData['profile_image'] = $imagePath;
+    
+            Log::info('Profile image stored at: ' . $imagePath);
+    
+            $user->update(['profile_image' => $imagePath]);
         } else {
+            Log::warning('No valid profile image uploaded');
             unset($validatedData['profile_image']);
         }
-
-        $user->update($validatedData);
-
+    
+        Log::info('Updating profile with data:', $validatedData);
+    
         if ($user->profile) {
             $user->profile->update($validatedData);
+            Log::info('Updated existing profile');
         } else {
             $user->profile()->create($validatedData);
+            Log::info('Created new profile');
         }
-
+    
         return UserResource::make($user->load('profile'));
     }
 
