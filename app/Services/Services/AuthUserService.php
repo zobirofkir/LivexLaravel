@@ -17,25 +17,29 @@ class AuthUserService implements AuthUserConstructor
     {
         $user = Auth::user();
         $validatedData = $request->validated();
-
+    
         if (isset($validatedData['profile_image']) && $validatedData['profile_image']) {
-            $imagePath = $validatedData['profile_image']->store('profile_images', 'public');
+            if ($user->profile_image && Storage::disk('public')->exists($user->profile_image)) {
+                Storage::disk('public')->delete($user->profile_image);
+            }
+    
+            $imagePath = Storage::disk('public')->putFile('profile_images', $validatedData['profile_image']);
             $validatedData['profile_image'] = $imagePath;
         } else {
             unset($validatedData['profile_image']);
         }
-
+    
         $user->update($validatedData);
-
+    
         if ($user->profile) {
             $user->profile->update($validatedData);
         } else {
             $user->profile()->create($validatedData);
         }
-
+    
         return UserResource::make($user->load('profile'));
     }
-
+    
     /**
      * Get the authenticated user's information.
      */
