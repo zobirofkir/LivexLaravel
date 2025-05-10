@@ -65,4 +65,22 @@ class VideoRequestTest extends TestCase
         
         $response->assertStatus(200);
     }
+
+    /**
+     * test Delete Video
+     */
+    public function testDeleteVideo()
+    {
+        $this->authenticate();
+
+        $video = Video::create([
+            'title' => 'test title',
+            'video_url' => 'https://zobirofkir.com',
+            'user_id' => Auth::id(), 
+        ]);
+
+        $response = $this->delete("api/auth/user/reels/{$video->id}");
+
+        $response->assertStatus(200);
+    }
 }
