@@ -1,26 +1,29 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services\Services;
+
+use App\Services\Constructors\VideoConstructor;
 
 use App\Http\Requests\VideoRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\VideoResource;
 use App\Models\Video;
-use App\Services\Facades\VideoFacade;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
-class VideoController extends Controller
+class VideoService implements VideoConstructor
 {
-    /**
+        /**
      * Display a listing of the resource.
      * 
      * @return AnonymousResourceCollection
      */
     public function index(): AnonymousResourceCollection
     {
-        return VideoFacade::index();
+        return VideoResource::collection(
+            Video::all()
+        );
     }
 
     /**
@@ -30,9 +33,10 @@ class VideoController extends Controller
      */
     public function show($id): VideoResource
     {
-        return VideoFacade::show($id);
+        $video = Video::findOrFail($id);
+        return VideoResource::make($video);
     }
-
+    
     /**
      * Update the specified resource in storage.
      * 
@@ -42,7 +46,12 @@ class VideoController extends Controller
      */
     public function store(VideoRequest $request) : VideoResource
     {
-        return VideoFacade::store($request);
+        return VideoResource::make(
+            Video::create(array_merge(
+                $request->validated(),
+                ['user_id' => Auth::user()->id]
+            ))
+        );
     }
 
     /**
@@ -54,10 +63,19 @@ class VideoController extends Controller
      */
     public function update(VideoRequest $request, $id) : VideoResource
     {
-        return VideoFacade::update($request, $id);
-    }
+        $video = Video::findOrFail($id);
 
-        /**
+        $video->update(
+            array_merge(
+                $request->validated(),
+                ['user_id' => $video->user_id]
+            )
+        );
+    
+        return VideoResource::make($video->refresh());
+    }
+    
+    /**
      * Remove the specified resource from storage.
      * 
      * @param Video $video
@@ -65,7 +83,8 @@ class VideoController extends Controller
      */
     public function destroy($id) : bool
     {
-        return VideoFacade::destroy($id);
+        $video = Video::findOrFail($id);
+        return $video->delete();
     }
-
+    
 }

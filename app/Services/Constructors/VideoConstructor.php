@@ -1,37 +1,26 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services\Constructors;
 
 use App\Http\Requests\VideoRequest;
-use App\Http\Resources\UserResource;
 use App\Http\Resources\VideoResource;
-use App\Models\Video;
-use App\Services\Facades\VideoFacade;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Auth;
 
-class VideoController extends Controller
+interface VideoConstructor
 {
     /**
      * Display a listing of the resource.
      * 
      * @return AnonymousResourceCollection
      */
-    public function index(): AnonymousResourceCollection
-    {
-        return VideoFacade::index();
-    }
+    public function index(): AnonymousResourceCollection;
 
     /**
      * Display the specified resource.
      * 
      * @return VideoResource
      */
-    public function show($id): VideoResource
-    {
-        return VideoFacade::show($id);
-    }
+    public function show($id): VideoResource;
 
     /**
      * Update the specified resource in storage.
@@ -40,10 +29,7 @@ class VideoController extends Controller
      * @param Video $video
      * @return VideoResource
      */
-    public function store(VideoRequest $request) : VideoResource
-    {
-        return VideoFacade::store($request);
-    }
+    public function store(VideoRequest $request) : VideoResource;
 
     /**
      * Update the specified resource in storage.
@@ -52,10 +38,7 @@ class VideoController extends Controller
      * @param Video $video
      * @return VideoResource
      */
-    public function update(VideoRequest $request, $id) : VideoResource
-    {
-        return VideoFacade::update($request, $id);
-    }
+    public function update(VideoRequest $request, $id) : VideoResource;
 
         /**
      * Remove the specified resource from storage.
@@ -63,9 +46,6 @@ class VideoController extends Controller
      * @param Video $video
      * @return bool
      */
-    public function destroy($id) : bool
-    {
-        return VideoFacade::destroy($id);
-    }
+    public function destroy($id) : bool;
 
 }
