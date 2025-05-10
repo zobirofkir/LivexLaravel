@@ -23,6 +23,11 @@ class VideoResource extends JsonResource
             "description" => $this->description,
             "duration" => $this->duration,
             "views" => $this->views,
+
+            /**
+             * user info
+             */
+            "user_name" => $this->user->name
         ];
     }
 }
