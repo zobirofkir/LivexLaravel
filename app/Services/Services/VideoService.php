@@ -11,6 +11,7 @@ use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class VideoService implements VideoConstructor
 {
@@ -46,10 +47,24 @@ class VideoService implements VideoConstructor
      */
     public function store(VideoRequest $request) : VideoResource
     {
+        $validatedData = $request->validated();
+        $user = Auth::user();
+
+        if (isset($validatedData['video_url']) && $validatedData['video_url']) {
+            if ($user->video_url && Storage::disk('public')->exists($user->video_url)) {
+                Storage::disk('public')->delete($user->video_url);
+            }
+    
+            $imagePath = Storage::disk('public')->putFile('video_urls', $validatedData['video_url']);
+            $validatedData['video_url'] = $imagePath;
+        } else {
+            unset($validatedData['video_url']);
+        }
+
         return VideoResource::make(
             Video::create(array_merge(
-                $request->validated(),
-                ['user_id' => Auth::user()->id]
+                $validatedData,
+                ['user_id' => $user->id]
             ))
         );
     }
