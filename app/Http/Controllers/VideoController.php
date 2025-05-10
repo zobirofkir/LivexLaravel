@@ -8,6 +8,7 @@ use App\Http\Resources\VideoResource;
 use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Auth;
 
 class VideoController extends Controller
 {
@@ -43,7 +44,10 @@ class VideoController extends Controller
     public function store(VideoRequest $request) : VideoResource
     {
         return VideoResource::make(
-            Video::create($request->validated())
+            Video::create(array_merge(
+                $request->validated(),
+                ['user_id' => Auth::user()->id]
+            ))
         );
     }
 

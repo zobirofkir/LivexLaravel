@@ -16,6 +16,7 @@ class VideoResource extends JsonResource
     {
         return [
             "id" => $this->id,
+            'user_id' => $this->user_id,
             "title" => $this->title,
             "video_url" => asset('storage/' . $this->video_url),
             "thumbnail" => asset('storage/' . $this->thumbnail),
