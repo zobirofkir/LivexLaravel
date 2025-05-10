@@ -78,20 +78,30 @@ class VideoService implements VideoConstructor
      * @param Video $video
      * @return VideoResource
      */
-    public function update(VideoRequest $request, $id) : VideoResource
+    public function update(VideoRequest $request, $id): VideoResource
     {
         $video = Video::findOrFail($id);
-
-        $video->update(
-            array_merge(
-                $request->validated(),
-                ['user_id' => $video->user_id]
-            )
-        );
+        $data = $request->validated();
+    
+        if (!empty($data['video_url'])) {
+            if ($video->video_url && Storage::disk('public')->exists($video->video_url)) {
+                Storage::disk('public')->delete($video->video_url);
+            }
+            $data['video_url'] = $data['video_url']->store('video_urls', 'public');
+        }
+    
+        if (!empty($data['thumbnail'])) {
+            if ($video->thumbnail && Storage::disk('public')->exists($video->thumbnail)) {
+                Storage::disk('public')->delete($video->thumbnail);
+            }
+            $data['thumbnail'] = $data['thumbnail']->store('thumbnails', 'public');
+        }
+    
+        $video->update($data);
     
         return VideoResource::make($video->refresh());
     }
-    
+        
     /**
      * Remove the specified resource from storage.
      * 
