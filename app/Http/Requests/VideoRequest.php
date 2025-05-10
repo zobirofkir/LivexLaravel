@@ -23,7 +23,7 @@ class VideoRequest extends FormRequest
     {
         return [
             "title" => "required|string|max:255",
-            "video_url" => "required|url",
+            "video_url" => "required|url|mimes:mp4,mkv,avi,mov|max:20480",
             "thumbnail" => "nullable|image|mimes:jpeg,png,jpg,gif|max:2048",
             "description" => "nullable|string|max:1000",
             "duration" => "nullable|integer|min:0",
