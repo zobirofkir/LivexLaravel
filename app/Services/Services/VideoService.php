@@ -45,30 +45,32 @@ class VideoService implements VideoConstructor
      * @param Video $video
      * @return VideoResource
      */
-    public function store(VideoRequest $request) : VideoResource
+    public function store(VideoRequest $request): VideoResource
     {
-        $validatedData = $request->validated();
+        $data = $request->validated();
         $user = Auth::user();
-
-        if (isset($validatedData['video_url']) && $validatedData['video_url']) {
+    
+        if (!empty($data['video_url'])) {
             if ($user->video_url && Storage::disk('public')->exists($user->video_url)) {
                 Storage::disk('public')->delete($user->video_url);
             }
-    
-            $imagePath = Storage::disk('public')->putFile('video_urls', $validatedData['video_url']);
-            $validatedData['video_url'] = $imagePath;
-        } else {
-            unset($validatedData['video_url']);
+            $data['video_url'] = $data['video_url']->store('video_urls', 'public');
         }
-
+    
+        if (!empty($data['thumbnail'])) {
+            if ($user->thumbnail && Storage::disk('public')->exists($user->thumbnail)) {
+                Storage::disk('public')->delete($user->thumbnail);
+            }
+            $data['thumbnail'] = $data['thumbnail']->store('thumbnails', 'public');
+        }
+    
+        $data['user_id'] = $user->id;
+        
         return VideoResource::make(
-            Video::create(array_merge(
-                $validatedData,
-                ['user_id' => $user->id]
-            ))
+            Video::create($data)
         );
     }
-
+        
     /**
      * Update the specified resource in storage.
      * 
