@@ -27,7 +27,8 @@ class VideoResource extends JsonResource
             /**
              * user info
              */
-            "user_name" => $this->user->name
+            "user_name" => $this->user->name,
+            "user_image" => asset('storage/'.$this->user->profile_image)
         ];
     }
 }
