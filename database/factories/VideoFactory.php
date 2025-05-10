@@ -18,11 +18,7 @@ class VideoFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence,
-            'video_url' => $this->faker->url,
-            'thumbnail' => $this->faker->imageUrl(640, 480, 'video', true),
-            'description' => $this->faker->paragraph,
-            'duration' => $this->faker->numberBetween(30, 3600), 
-            'views' => $this->faker->numberBetween(0, 10000),
+            'video_url' => $this->faker->url
         ];
     }
 }
