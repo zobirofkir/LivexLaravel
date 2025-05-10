@@ -37,7 +37,7 @@ class AuthUserService implements AuthUserConstructor
             $user->profile()->create($validatedData);
         }
     
-        return UserResource::make($user->load('profile'));
+        return UserResource::make($user->load(['profile', 'videos']));
     }
     
     /**
@@ -46,7 +46,7 @@ class AuthUserService implements AuthUserConstructor
     public function show(): UserResource
     {
         $auth = Auth::user();
-        return UserResource::make($auth->load('profile'));
+        return UserResource::make($auth->load(['profile', 'videos']));
     }
 
     /**

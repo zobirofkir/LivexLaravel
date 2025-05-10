@@ -19,6 +19,7 @@ class UserResource extends JsonResource
             'phone_number' => $this->phone_number,
             'profile_image' => asset('storage/' . $this->profile_image),
             'profile' => new ProfileResource($this->profile),
+            'videos' => VideoResource::collection($this->videos)
         ];
     }
 }
