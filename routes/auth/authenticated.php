@@ -11,7 +11,12 @@ Route::middleware('auth:api')->prefix('auth/user')->group(function () {
     /**
      * Api Resource for Videos
      */
-    Route::apiResource('/reels', VideoController::class);
+    Route::apiResource('/reels', VideoController::class)->except('update');
+
+    /**
+     * Update Video By Id
+     */
+    Route::post('reels/{id}', [VideoController::class, 'update']);
 
     /**
      * Update Current Authenticated Route

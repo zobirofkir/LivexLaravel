@@ -60,7 +60,12 @@ class VideoController extends Controller
      */
     public function update(VideoRequest $request, Video $video) : VideoResource
     {
-        $video->update($request->validated());
+        $video->update(
+            array_merge(
+                $request->validated(),
+                ['user_id' => $video->user_id]
+            )
+        );
 
         return VideoResource::make(
             $video->refresh()
