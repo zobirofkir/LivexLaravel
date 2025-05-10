@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -49,13 +51,31 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * The attributes that should be appended to the model's array form.
+     */
     public function generateToken()
     {
         return $this->createToken('accessToken')->accessToken;
     }
 
-    public function profile()
+    /**
+     * The attributes that should be appended to the model's array form.
+     * 
+     * @return HasOne
+     */
+    public function profile() : HasOne
     {
         return $this->hasOne(Profile::class);
+    }
+
+    /**
+     * The attributes that should be appended to the model's array form.
+     * 
+     * @return HasMany
+     */
+    public function videos() : HasMany
+    {
+        return $this->hasMany(Video::class);
     }
 }
