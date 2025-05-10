@@ -29,11 +29,12 @@ class VideoController extends Controller
      * 
      * @return VideoResource
      */
-    public function show(Video $video) : VideoResource
+    public function show($id): VideoResource
     {
+        $video = Video::findOrFail($id);
         return VideoResource::make($video);
     }
-
+    
     /**
      * Update the specified resource in storage.
      * 
@@ -58,28 +59,29 @@ class VideoController extends Controller
      * @param Video $video
      * @return VideoResource
      */
-    public function update(VideoRequest $request, Video $video) : VideoResource
+    public function update(VideoRequest $request, $id) : VideoResource
     {
+        $video = Video::findOrFail($id);
+
         $video->update(
             array_merge(
                 $request->validated(),
                 ['user_id' => $video->user_id]
             )
         );
-
-        return VideoResource::make(
-            $video->refresh()
-        );
+    
+        return VideoResource::make($video->refresh());
     }
-
+    
     /**
      * Remove the specified resource from storage.
      * 
      * @param Video $video
      * @return bool
      */
-    public function destroy(Video $video) : bool
+    public function destroy($id) : bool
     {
+        $video = Video::findOrFail($id);
         return $video->delete();
     }
     
