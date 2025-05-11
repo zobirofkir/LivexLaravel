@@ -23,10 +23,10 @@ class VideoService implements VideoConstructor
     public function index(): AnonymousResourceCollection
     {
         return VideoResource::collection(
-            Video::orderBy('id', 'desc')->paginate(5)
+            Video::orderBy('id', 'desc')->take(10)->get()
         );
     }
-    
+
     /**
      * Display the specified resource.
      * 
