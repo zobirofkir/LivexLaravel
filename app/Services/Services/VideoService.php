@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
 
 class VideoService implements VideoConstructor
 {
-        /**
+    /**
      * Display a listing of the resource.
      * 
      * @return AnonymousResourceCollection
