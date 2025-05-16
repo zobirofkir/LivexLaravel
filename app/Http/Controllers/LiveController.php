@@ -4,32 +4,34 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\Facades\LiveFacade;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
 class LiveController extends Controller
 {
-    public function goLive()
+    /**
+     * Start User Live
+     */
+    public function goLive(): bool
     {
-        $user = Auth::user();
-        $user->is_live = true;
-        $user->save();
-
-        return true;
+        return LiveFacade::goLive();
     }
 
-    public function stopLive()
+    /**
+     * Stop Live
+     */
+    public function stopLive(): bool
     {
-        $user = Auth::user();
-        $user->is_live = false;
-        $user->save();
-
-        return true;
+        return LiveFacade::stopLive();
     }
 
-    public function getLiveUsers()
+    /**
+     * Get Live Users
+     */
+    public function getLiveUsers(): AnonymousResourceCollection
     {
-        $users = User::where('is_live', true)->get();
-        return UserResource::collection($users);
+        return LiveFacade::getLiveUsers();
     }
 }
