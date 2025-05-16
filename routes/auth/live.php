@@ -10,7 +10,7 @@ Route::middleware('auth:api')->prefix('auth/user')->group(function() {
     /**
      * Go Live Route
      */
-    Route::post('/go-live', [LiveController::class, 'goLive']);
+    Route::post('/start-live', [LiveController::class, 'goLive']);
 
     /**
      * Stop Live Route
@@ -20,5 +20,5 @@ Route::middleware('auth:api')->prefix('auth/user')->group(function() {
     /**
      * Get Users Live
      */
-    Route::get('/live-users', [LiveController::class, 'getLiveUsers']);
+    Route::get('/get-lives', [LiveController::class, 'getLiveUsers']);
 });
