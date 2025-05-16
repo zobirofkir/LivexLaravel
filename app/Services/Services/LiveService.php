@@ -34,7 +34,7 @@ class LiveService implements LiveConstructor
         Live::create([
             'user_id' => $user->id,
             'stream_key' => Str::uuid(), 
-            'title' => $user->name . "'s Live Stream",
+            'title' => $user->name,
             'started_at' => now(),
         ]);
     
