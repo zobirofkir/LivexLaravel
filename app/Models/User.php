@@ -82,7 +82,7 @@ class User extends Authenticatable
     /**
      * Create Raltion SHeep
      */
-    public function lives() : HasOne
+    public function live(): HasOne
     {
         return $this->hasOne(Live::class);
     }

@@ -57,8 +57,8 @@ class LiveService implements LiveConstructor
      */
     public function getLiveUsers(): AnonymousResourceCollection
     {
-        $users = User::where('is_live', true)->get();
-        return LiveResource::collection($users);
+        $lives = Live::with('user')->whereNull('ended_at')->get();
+        return LiveResource::collection($lives);
     }
 
 }
