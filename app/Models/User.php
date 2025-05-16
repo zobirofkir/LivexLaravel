@@ -78,4 +78,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Video::class);
     }
+
+    /**
+     * Create Raltion SHeep
+     */
+    public function lives() : HasOne
+    {
+        return $this->hasOne(Live::class);
+    }
 }
