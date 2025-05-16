@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_live')->default(false);
-        });
+        /**
+         * Ensure the column doesn't already exist before adding it
+         */
+        if (!Schema::hasColumn('users', 'is_live')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->boolean('is_live')->default(false)->after('profile_image');
+            });
+        }
     }
 
     /**
@@ -21,8 +26,13 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('is_live');
-        });
+        /**
+         * Ensure the column exists before trying to drop it
+         */
+        if (Schema::hasColumn('users', 'is_live')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('is_live');
+            });
+        }
     }
 };
