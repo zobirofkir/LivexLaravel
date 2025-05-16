@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services\Services;
 
-use App\Http\Resources\UserResource;
+use App\Services\Constructors\LiveConstructor;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class LiveController extends Controller
+
+class LiveService implements LiveConstructor
 {
     public function goLive()
     {
@@ -15,7 +17,7 @@ class LiveController extends Controller
         $user->is_live = true;
         $user->save();
 
-        return true;
+        return response()->json(['message' => 'User is now live']);
     }
 
     public function stopLive()
@@ -24,12 +26,12 @@ class LiveController extends Controller
         $user->is_live = false;
         $user->save();
 
-        return true;
+        return response()->json(['message' => 'User stopped live']);
     }
 
     public function getLiveUsers()
     {
         $users = User::where('is_live', true)->get();
-        return UserResource::collection($users);
+        return response()->json($users);
     }
 }
