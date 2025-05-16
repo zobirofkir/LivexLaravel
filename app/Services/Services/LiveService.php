@@ -2,12 +2,11 @@
 
 namespace App\Services\Services;
 
+use App\Http\Resources\LiveResource;
 use App\Services\Constructors\LiveConstructor;
 
-use App\Http\Resources\UserResource;
 use App\Models\Live;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -59,7 +58,7 @@ class LiveService implements LiveConstructor
     public function getLiveUsers(): AnonymousResourceCollection
     {
         $users = User::where('is_live', true)->get();
-        return UserResource::collection($users);
+        return LiveResource::collection($users);
     }
 
 }
