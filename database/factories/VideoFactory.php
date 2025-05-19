@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Http\UploadedFile;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Video>
@@ -18,7 +19,7 @@ class VideoFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence,
-            'video_url' => $this->faker->url
+            'video_url' => UploadedFile::fake()->create('video.mp4', 1000, 'video/mp4')
         ];
     }
 }

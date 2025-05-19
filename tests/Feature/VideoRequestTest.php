@@ -6,7 +6,9 @@ use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 
@@ -26,9 +28,11 @@ class VideoRequestTest extends TestCase
     public function testCreateReel()
     {
         $this->authenticate();
+        Storage::fake('videos');
+        
         $data = [
             "title" => "first reel",
-            "video_url" => "https://zobirofkir.com",
+            "video_url" => UploadedFile::fake()->create('video.mp4', 1000, 'video/mp4'),
         ];
         $response = $this->post('api/auth/user/reels', $data);
 
@@ -49,16 +53,21 @@ class VideoRequestTest extends TestCase
     public function testUpdateVideo()
     {
         $this->authenticate();
-    
+        Storage::fake('videos');
+        
+        // Create a video with a proper file path that would be stored in the database
+        $videoFile = UploadedFile::fake()->create('original.mp4', 1000, 'video/mp4');
+        $videoPath = $videoFile->store('videos');
+        
         $video = Video::create([
             'title' => 'test title',
-            'video_url' => 'https://zobirofkir.com',
+            'video_url' => $videoPath,
             'user_id' => Auth::id(), 
         ]);
     
         $updateVideo = [
-            "title" => "first reel",
-            "video_url" => "https://zobirofkir.com",
+            "title" => "updated reel",
+            "video_url" => UploadedFile::fake()->create('updated.mp4', 1000, 'video/mp4'),
         ];
     
         $response = $this->postJson("api/auth/user/reels/{$video->id}", $updateVideo);
@@ -72,10 +81,14 @@ class VideoRequestTest extends TestCase
     public function testDeleteVideo()
     {
         $this->authenticate();
-
+        Storage::fake('videos');
+        
+        $videoFile = UploadedFile::fake()->create('delete_test.mp4', 1000, 'video/mp4');
+        $videoPath = $videoFile->store('videos');
+        
         $video = Video::create([
             'title' => 'test title',
-            'video_url' => 'https://zobirofkir.com',
+            'video_url' => $videoPath,
             'user_id' => Auth::id(), 
         ]);
 
