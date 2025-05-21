@@ -29,12 +29,16 @@ class VideoService implements VideoConstructor
 
     /**
      * Display the specified resource.
+     * Automatically increments view count when accessed.
      * 
      * @return VideoResource
      */
     public function show($id): VideoResource
     {
         $video = Video::findOrFail($id);
+        
+        $video->increment('views');
+        
         return VideoResource::make($video);
     }
     
