@@ -14,6 +14,7 @@ use App\Http\Requests\Auth\SendLoginLinkRequest;
 use App\Http\Requests\Auth\VerifyLoginLinkRequest;
 use App\Http\Requests\Auth\VerifyOTPRequest;
 use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Support\Facades\Storage;
 
 class AuthEmailService
 {
@@ -101,25 +102,26 @@ class AuthEmailService
         $password = $request->password;
         
         $storedOTP = Cache::get('otp_' . $email);
-        
+    
         if (!$storedOTP) {
             throw new \Exception('OTP expired or not found');
         }
-        
+    
         if ($storedOTP !== $otp) {
             throw new \Exception('Invalid OTP');
         }
-        
+    
         Cache::forget('otp_' . $email);
+    
         $user = $this->getOrCreateUser($email, $password);
-        
+    
         $this->sendPasswordEmail($email, $password);
-        
+    
         return [
             'user' => $user
         ];
     }
-
+    
     public function login(LoginRequest $request)
     {
         $validatedData = $request->validated();
@@ -138,17 +140,24 @@ class AuthEmailService
     protected function getOrCreateUser($email, $password = null)
     {
         $user = User::where('email', $email)->first();
-        
+    
         if (!$user) {
             $password = $password ? trim($password) : Str::random(10);
             $hashedPassword = Hash::make($password);
-            
+    
+            $sourcePath = public_path('assets/images/profile_image.png');
+            $fileName = Str::uuid() . '.png';
+            $storagePath = 'profile_images/' . $fileName;
+    
+            Storage::disk('public')->put($storagePath, file_get_contents($sourcePath));
+    
             $user = User::create([
                 'email' => $email,
                 'password' => $hashedPassword,
+                'profile_image' => $storagePath,
             ]);
         }
-        
+    
         return $user;
     }
 
