@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Storage;
 
 class AuthEmailService
 {
+    /**
+     * Create New User
+     */
     public function createUser($email, $password, $name)
     {
         $hashedPassword = Hash::make(trim($password));
@@ -38,6 +41,9 @@ class AuthEmailService
         return $user;
     }
 
+    /**
+     * Send Sign in link
+     */
     public function sendSignInLink(SendLoginLinkRequest $request)
     {
         $email = $request->email;
@@ -54,6 +60,9 @@ class AuthEmailService
         ];
     }
 
+    /**
+     * Verify Sign in link
+     */
     public function verifySignInLink(VerifyLoginLinkRequest $request)
     {
         $email = $request->email;
@@ -80,6 +89,9 @@ class AuthEmailService
         ];
     }
 
+    /**
+     * Send Otp Code
+     */
     public function sendOTP(SendLoginLinkRequest $request)
     {
         $email = $request->email;
@@ -95,6 +107,9 @@ class AuthEmailService
         ];
     }
 
+    /**
+     * Verify Otp Code
+     */
     public function verifyOTP(VerifyOTPRequest $request)
     {
         $email = $request->email;
@@ -122,6 +137,9 @@ class AuthEmailService
         ];
     }
     
+    /**
+     * Login By Email Address
+     */
     public function login(LoginRequest $request)
     {
         $validatedData = $request->validated();
@@ -137,6 +155,9 @@ class AuthEmailService
     }
 
 
+    /**
+     * Get Or Create Data For Example If the profile_image is empty i create new default profile image
+     */
     protected function getOrCreateUser($email, $password = null)
     {
         $user = User::where('email', $email)->first();
@@ -161,6 +182,9 @@ class AuthEmailService
         return $user;
     }
 
+    /**
+     * Send Welcome Email
+     */
     protected function sendWelcomeEmail($email, $password)
     {
         Mail::send('emails.welcome', [
@@ -171,6 +195,9 @@ class AuthEmailService
         });
     }
 
+    /**
+     * Send Password To The Email
+     */
     protected function sendPasswordEmail($email, $password)
     {
         Mail::send('emails.password', [
