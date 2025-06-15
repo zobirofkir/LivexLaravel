@@ -4,10 +4,10 @@ namespace App\Services\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class LiveFacade extends Facade
+class LiveStreamFacade extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'LiveService';
+        return 'LiveStreamService';
     }
 }

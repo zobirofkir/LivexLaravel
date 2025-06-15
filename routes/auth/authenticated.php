@@ -1,13 +1,13 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthUserController;
+use App\Http\Controllers\LiveStreamController;
 use App\Http\Controllers\VideoController;
 
 /**
  * Authenticated Routes
  */
 Route::middleware('auth:api')->prefix('auth/user')->group(function () {
-
     /**
      * Api Resource for Videos
      */

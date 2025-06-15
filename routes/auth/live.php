@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LiveController;
+use App\Http\Controllers\LiveStreamController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -8,17 +9,8 @@ use Illuminate\Support\Facades\Route;
  */
 Route::middleware('auth:api')->prefix('auth/user')->group(function() {
     /**
-     * Go Live Route
+     * Api Resource for Live Streams
      */
-    Route::post('/start-live', [LiveController::class, 'goLive']);
+    Route::apiResource('/lives', LiveStreamController::class);
 
-    /**
-     * Stop Live Route
-     */
-    Route::post('/stop-live', [LiveController::class, 'stopLive']);
-
-    /**
-     * Get Users Live
-     */
-    Route::get('/get-lives', [LiveController::class, 'getLiveUsers']);
 });
