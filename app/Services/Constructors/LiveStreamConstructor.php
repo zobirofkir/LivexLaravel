@@ -3,17 +3,34 @@
 namespace App\Services\Constructors;
 
 use App\Http\Requests\LiveStreamRequest;
+use App\Http\Resources\LiveStreamResource;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 interface LiveStreamConstructor
 {
-    public function index();
+    /**
+     * Liste All Lives
+     */
+    public function index() : AnonymousResourceCollection;
 
-    public function store(LiveStreamRequest $request);
+    /**
+     * Store Live
+     */
+    public function store(LiveStreamRequest $request) : LiveStreamResource;
 
-    public function show($id);
+    /**
+     * Show Single Live
+     */
+    public function show($id) : LiveStreamResource;
 
-    public function update(Request $request, $id);
+    /**
+     * Update Live
+     */
+    public function update(Request $request, $id) : LiveStreamResource;
     
-    public function destroy($id);
+    /**
+     * Delete Live
+     */
+    public function destroy($id) : bool;
 }

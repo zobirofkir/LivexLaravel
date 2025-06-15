@@ -7,6 +7,7 @@ use App\Http\Resources\LiveStreamResource;
 use App\Models\LiveStream;
 use App\Services\Constructors\LiveStreamConstructor;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -15,7 +16,7 @@ class LiveStreamService implements LiveStreamConstructor
     /**
      * List Lives
      */
-    public function index()
+    public function index() : AnonymousResourceCollection
     {
         return LiveStreamResource::collection(
             LiveStream::where('is_live', true)->with('user')->get()
@@ -25,7 +26,7 @@ class LiveStreamService implements LiveStreamConstructor
     /**
      * Store Live
      */
-    public function store(LiveStreamRequest $request)
+    public function store(LiveStreamRequest $request): LiveStreamResource
     {
         $stream = LiveStream::create(array_merge(
             $request->validated(),
@@ -41,7 +42,7 @@ class LiveStreamService implements LiveStreamConstructor
     /**
      * Show Live
      */
-    public function show($id)
+    public function show($id) : LiveStreamResource
     {
         $stream = LiveStream::with('user')->findOrFail($id);
         return LiveStreamResource::make($stream);
@@ -50,7 +51,7 @@ class LiveStreamService implements LiveStreamConstructor
     /**
      * Update Live
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id) : LiveStreamResource
     {
         $stream = LiveStream::where('user_id', Auth::id())->findOrFail($id);
 
@@ -67,7 +68,7 @@ class LiveStreamService implements LiveStreamConstructor
     /**
      * Delete Live
      */
-    public function destroy($id)
+    public function destroy($id) : bool
     {
         $stream = LiveStream::where('user_id', Auth::id())->findOrFail($id);
 
