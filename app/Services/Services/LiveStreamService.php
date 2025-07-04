@@ -19,7 +19,7 @@ class LiveStreamService implements LiveStreamConstructor
     public function index() : AnonymousResourceCollection
     {
         return LiveStreamResource::collection(
-            LiveStream::where('is_live', true)->with('user')->get()
+            LiveStream::with('user')->get()
         );
     }
 
