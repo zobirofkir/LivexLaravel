@@ -16,10 +16,10 @@ class LiveStreamService implements LiveStreamConstructor
     /**
      * List Lives
      */
-    public function index() : AnonymousResourceCollection
+    public function index(): AnonymousResourceCollection
     {
         return LiveStreamResource::collection(
-            LiveStream::with('user')->get()
+            LiveStream::with('user')->orderBy('created_at', 'desc')->get()
         );
     }
 
