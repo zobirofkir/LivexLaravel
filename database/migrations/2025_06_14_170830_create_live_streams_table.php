@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('live_streams', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->string('title');
+            $table->string('title')->unique();
             $table->string('stream_key')->unique();
             $table->boolean('is_live')->default(false);
             $table->timestamps();
