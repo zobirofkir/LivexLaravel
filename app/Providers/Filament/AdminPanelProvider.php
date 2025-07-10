@@ -28,8 +28,19 @@ class AdminPanelProvider extends PanelProvider
             ->path('/')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Purple,
+                'gray' => Color::Slate,
             ])
+            ->brandName('LiveX Admin')
+            ->favicon(asset('favicon.ico'))
+            ->darkMode(false)
+            ->sidebarCollapsibleOnDesktop()
+            ->navigationGroups([
+                'User Management',
+                'Content Management',
+                'System',
+            ])
+            ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
