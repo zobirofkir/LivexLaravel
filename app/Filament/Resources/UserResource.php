@@ -48,7 +48,7 @@ class UserResource extends Resource
                     ->dehydrated(fn ($state) => filled($state))
                     ->required(fn (string $context): bool => $context === 'create')
                     ->maxLength(255),
-            ]);
+            ])->columns(1);
     }
 
     public static function table(Table $table): Table
