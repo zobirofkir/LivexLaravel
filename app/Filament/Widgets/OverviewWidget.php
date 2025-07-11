@@ -9,21 +9,23 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class OverviewWidget extends BaseWidget
 {
+    protected int | string | array $columnSpan = 'full';
+
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Users', User::count())
-                ->description('Registered users')
+            Stat::make('Total Utilisateurs', User::count())
+                ->description('Utilisateurs inscrits')
                 ->descriptionIcon('heroicon-m-users')
                 ->color('success'),
             
-            Stat::make('Total Live Streams', LiveStream::count())
-                ->description('All live streams')
+            Stat::make('Total Diffusions', LiveStream::count())
+                ->description('Toutes les diffusions')
                 ->descriptionIcon('heroicon-m-video-camera')
                 ->color('info'),
             
-            Stat::make('Currently Live', LiveStream::where('is_live', true)->count())
-                ->description('Active streams')
+            Stat::make('En Direct', LiveStream::where('is_live', true)->count())
+                ->description('Diffusions actives')
                 ->descriptionIcon('heroicon-m-signal')
                 ->color('danger'),
         ];

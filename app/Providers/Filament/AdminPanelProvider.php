@@ -3,6 +3,12 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Widgets\OverviewWidget;
+use App\Filament\Widgets\ActiveUsersWidget;
+use App\Filament\Widgets\UserRegistrationChart;
+use App\Filament\Widgets\LiveStreamChart;
+use App\Filament\Widgets\StreamingActivityChart;
+use App\Filament\Widgets\LiveStreamsTable;
+use App\Filament\Widgets\PopularStreamersTable;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -48,7 +54,13 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->widgets([
-                OverviewWidget::class
+                OverviewWidget::class,
+                ActiveUsersWidget::class,
+                UserRegistrationChart::class,
+                LiveStreamChart::class,
+                StreamingActivityChart::class,
+                LiveStreamsTable::class,
+                PopularStreamersTable::class,
             ])
             ->middleware([
                 EncryptCookies::class,

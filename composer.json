@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "filament/filament": "^3.3",
+        "flowframe/laravel-trend": "*",
         "kreait/firebase-php": "^7.18",
         "laravel/framework": "^12.0",
         "laravel/passport": "^12.4",
