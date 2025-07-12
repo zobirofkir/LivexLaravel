@@ -8,7 +8,7 @@ class LiveStream extends Model
 {
     protected $table = 'live_streams';
 
-    protected $fillable = ['title', 'stream_key', 'is_live', 'user_id'];
+    protected $fillable = ['title', 'stream_key', 'thumbnail', 'is_live', 'user_id'];
 
     public function user()
     {

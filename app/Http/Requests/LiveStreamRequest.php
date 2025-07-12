@@ -24,6 +24,7 @@ class LiveStreamRequest extends FormRequest
         return [
             'title' => 'required|string|max:255|unique:live_streams',
             'is_live' => 'boolean',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',    
         ];
     }
 }
