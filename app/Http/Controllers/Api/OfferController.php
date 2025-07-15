@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateOfferRequest;
 use App\Http\Resources\OfferResource;
 use App\Models\Offer;
 use App\Services\OfferService;
-use Illuminate\Http\JsonResponse;
+
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,9 +47,9 @@ class OfferController extends Controller
      * Store a newly created offer in storage.
      *
      * @param StoreOfferRequest $request
-     * @return JsonResponse
+     * @return OfferResource
      */
-    public function store(StoreOfferRequest $request): JsonResponse
+    public function store(StoreOfferRequest $request): OfferResource
     {
         $data = $request->validated();
         
@@ -66,9 +66,8 @@ class OfferController extends Controller
             ->additional([
                 'success' => true,
                 'message' => 'Offer created successfully',
-            ])
-            ->response()
-            ->setStatusCode(201);
+                'status' => 201
+            ]);
     }
 
     /**
@@ -89,9 +88,9 @@ class OfferController extends Controller
      *
      * @param UpdateOfferRequest $request
      * @param Offer $offer
-     * @return JsonResponse
+     * @return OfferResource
      */
-    public function update(UpdateOfferRequest $request, Offer $offer): JsonResponse
+    public function update(UpdateOfferRequest $request, Offer $offer): OfferResource
     {
         $data = $request->validated();
         
@@ -106,32 +105,34 @@ class OfferController extends Controller
         return (new OfferResource($offer))
             ->additional([
                 'success' => true,
-                'message' => 'Offer updated successfully',
-            ])
-            ->response();
+                'message' => 'Offer updated successfully'
+            ]);
     }
 
     /**
      * Remove the specified offer from storage.
      *
      * @param Offer $offer
-     * @return JsonResponse
+     * @return OfferResource|array
      */
-    public function destroy(Offer $offer): JsonResponse
+    public function destroy(Offer $offer)
     {
         // Check if user owns this offer
         if ($offer->user_id !== Auth::id()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized action',
-            ], 403);
+            return (new OfferResource([]))
+                ->additional([
+                    'success' => false,
+                    'message' => 'Unauthorized action',
+                    'status' => 403
+                ]);
         }
 
         $this->offerService->deleteOffer($offer);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Offer deleted successfully',
-        ]);
+        
+        return (new OfferResource([]))
+            ->additional([
+                'success' => true,
+                'message' => 'Offer deleted successfully'
+            ]);
     }
 }
