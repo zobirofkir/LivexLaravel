@@ -47,7 +47,12 @@ class OfferResource extends Resource
                     ->schema([
                 Select::make('user_id')
                     ->label('Creator')
-                    ->options(User::whereNotNull('name')->pluck('name', 'id')->toArray())
+                    ->options(
+                        User::whereNotNull('name')
+                            ->pluck('name', 'id')
+                            ->map(fn ($name) => (string) $name) 
+                            ->toArray()
+                    )
                     ->searchable()
                     ->required()
                     ->default(fn () => Auth::id()),
