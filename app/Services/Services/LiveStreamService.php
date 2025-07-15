@@ -9,6 +9,7 @@ use App\Services\Constructors\LiveStreamConstructor;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class LiveStreamService implements LiveStreamConstructor
@@ -28,8 +29,14 @@ class LiveStreamService implements LiveStreamConstructor
      */
     public function store(LiveStreamRequest $request): LiveStreamResource
     {
+        $data = $request->validated();
+        
+        if ($request->hasFile('thumbnail')) {
+            $data['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
+        }
+        
         $stream = LiveStream::create(array_merge(
-            $request->validated(),
+            $data,
             [
                 'user_id' => Auth::id(),
                 'stream_key' => Str::uuid(),
@@ -58,9 +65,19 @@ class LiveStreamService implements LiveStreamConstructor
         $request->validate([
             'title' => 'string',
             'is_live' => 'boolean',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        $stream->update($request->only(['title', 'is_live']));
+        $data = $request->only(['title', 'is_live']);
+        
+        if ($request->hasFile('thumbnail')) {
+            if ($stream->thumbnail) {
+                Storage::disk('public')->delete($stream->thumbnail);
+            }
+            $data['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
+        }
+
+        $stream->update($data);
 
         return LiveStreamResource::make($stream);
     }
@@ -71,8 +88,11 @@ class LiveStreamService implements LiveStreamConstructor
     public function destroy($id) : bool
     {
         $stream = LiveStream::where('user_id', Auth::id())->findOrFail($id);
+        
+        if ($stream->thumbnail) {
+            Storage::disk('public')->delete($stream->thumbnail);
+        }
 
         return $stream->delete();
-
     }
 }

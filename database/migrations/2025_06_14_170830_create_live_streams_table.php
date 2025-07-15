@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('title')->unique();
             $table->string('stream_key')->unique();
+            $table->string('thumbnail')->nullable();
             $table->boolean('is_live')->default(false);
             $table->timestamps();
         });
