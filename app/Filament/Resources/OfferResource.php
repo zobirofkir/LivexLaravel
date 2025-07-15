@@ -12,7 +12,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
-use App\Filament\Components\Select;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -45,21 +45,14 @@ class OfferResource extends Resource
             ->schema([
                 Section::make('Offer Details')
                     ->schema([
-                Select::make('user_id')
+                TextInput::make('user_id')
                     ->label('Creator')
-                    ->options(
-                        User::whereNotNull('name')
-                            ->pluck('name', 'id')
-                            ->map(fn ($name) => (string) $name) 
-                            ->toArray()
-                    )
-                    ->searchable()
-                    ->required()
-                    ->default(fn () => Auth::id()),
+                    ->default(fn () => Auth::id())
+                    ->required(),
                             
-                        TextInput::make('title')
-                            ->required()
-                            ->maxLength(255),
+                    TextInput::make('title')
+                        ->required()
+                        ->maxLength(255),
                             
                         FileUpload::make('image')
                             ->image()
@@ -150,9 +143,7 @@ class OfferResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('user_id')
-                    ->label('Creator')
-                    ->relationship('user', 'name'),
+                // SelectFilter removed to fix isOptionDisabled error
                     
                 TernaryFilter::make('is_active')
                     ->label('Active Status')
