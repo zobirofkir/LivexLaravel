@@ -8,6 +8,7 @@ use App\Models\Video;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
+use App\Filament\Components\Select;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -26,7 +27,7 @@ class VideoResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
+                Select::make('user_id')
                     ->label('User')
                     ->options(User::whereNotNull('name')->pluck('name', 'id'))
                     ->required()
