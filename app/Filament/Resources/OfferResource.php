@@ -45,12 +45,12 @@ class OfferResource extends Resource
             ->schema([
                 Section::make('Offer Details')
                     ->schema([
-                        Select::make('user_id')
-                            ->label('Creator')
-                            ->options(User::pluck('name', 'id'))
-                            ->searchable()
-                            ->required()
-                            ->default(fn () => Auth::id()),
+                Select::make('user_id')
+                    ->label('Creator')
+                    ->options(User::whereNotNull('name')->pluck('name', 'id')->toArray())
+                    ->searchable()
+                    ->required()
+                    ->default(fn () => Auth::id()),
                             
                         TextInput::make('title')
                             ->required()
