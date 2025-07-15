@@ -48,7 +48,8 @@ class OfferResource extends Resource
                 TextInput::make('user_id')
                     ->label('Creator')
                     ->default(fn () => Auth::id())
-                    ->required(),
+                    ->required()
+                    ->hidden(),
                             
                     TextInput::make('title')
                         ->required()
@@ -66,7 +67,7 @@ class OfferResource extends Resource
                         RichEditor::make('description')
                             ->required()
                             ->columnSpanFull(),
-                    ])->columns(2),
+                    ])->columns(1),
                     
                 Section::make('Pricing & Availability')
                     ->schema([
