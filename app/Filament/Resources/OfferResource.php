@@ -9,6 +9,7 @@ use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
@@ -49,7 +50,8 @@ class OfferResource extends Resource
                     ->label('Creator')
                     ->default(fn () => Auth::id())
                     ->required()
-                    ->hidden(),
+                    ->hidden()
+                    ->dehydrated(),
                             
                     TextInput::make('title')
                         ->required()
@@ -95,6 +97,8 @@ class OfferResource extends Resource
                             ->reorderable()
                             ->columnSpanFull(),
                     ]),
+
+                Hidden::make('user_id')->default(Auth::user()->id)
             ]);
     }
 
