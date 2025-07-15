@@ -3,12 +3,12 @@
 use App\Http\Controllers\Api\OfferController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('auth:api')->prefix('auth/user')->group(function () {
     
     /**
      * User's own offers
      */
-    Route::get('/my-offers', [OfferController::class, 'myOffers']);
+    Route::get('/offers/my', [OfferController::class, 'myOffers']);
     
     /**
      * CRUD operations for offers
