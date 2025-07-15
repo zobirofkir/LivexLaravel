@@ -21,3 +21,8 @@ require __DIR__.'/auth/mail.php';
  * phone routes
  */
 require __DIR__.'/auth/phone.php';
+
+/**
+ * offers routes
+ */
+require __DIR__.'/auth/offers.php';

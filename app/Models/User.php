@@ -91,4 +91,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(LiveStream::class);
     }
+    
+    /**
+     * Get the offers created by the user.
+     */
+    public function offers(): HasMany
+    {
+        return $this->hasMany(Offer::class);
+    }
 }
