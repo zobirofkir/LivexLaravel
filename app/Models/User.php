@@ -99,4 +99,34 @@ class User extends Authenticatable
     {
         return $this->hasMany(Offer::class);
     }
+
+    public function followers()
+    {
+        return $this->hasMany(Follower::class, 'following_id');
+    }
+
+    public function following()
+    {
+        return $this->hasMany(Follower::class, 'follower_id');
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    public function earnings()
+    {
+        return $this->hasMany(Earning::class);
+    }
+
+    public function totalLikes()
+    {
+        return $this->hasManyThrough(Like::class, Video::class);
+    }
+
+    public function totalEarnings()
+    {
+        return $this->earnings()->sum('amount');
+    }
 }
