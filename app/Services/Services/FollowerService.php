@@ -32,12 +32,12 @@ class FollowerService implements FollowerConstructor
 
     public function getFollowers(User $user)
     {
-        return $user->followers()->get();
+        return $user->followers;
     }
 
     public function getFollowing(User $user, int $perPage = 15)
     {
-        return $user->following()->with('following')->latest()->paginate($perPage);
+        return $user->following;
     }
 
     public function isFollowing(User $follower, User $following): bool
