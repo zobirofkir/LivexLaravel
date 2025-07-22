@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\Services\FollowerService;
 use Illuminate\Support\ServiceProvider;
 
 class FollowerServiceProvider extends ServiceProvider
@@ -11,7 +12,9 @@ class FollowerServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind('FollowerService', function($app) {
+            return new FollowerService();
+        });
     }
 
     /**
