@@ -27,7 +27,7 @@ Route::middleware('auth:api')->prefix('auth')->group(function () {
      * Like routes
      */
     Route::post('/like/{video}', [LikeController::class, 'like']);
-    Route::post('/unlike/{video}', [LikeController::class, 'unlike']);
+    Route::match(['post', 'get'], '/unlike/{video}', [LikeController::class, 'unlike']);
     Route::get('/liked-videos', [LikeController::class, 'likedVideos']);
     Route::get('/total-likes', [LikeController::class, 'totalLikes']);
     Route::get('/is-liked/{video}', [LikeController::class, 'isLiked']);

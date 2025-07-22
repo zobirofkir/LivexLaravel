@@ -21,9 +21,14 @@ class LikeService implements LikeConstructor
 
     public function unlike(User $user, Video $video): bool
     {
-        return Like::where('user_id', $user->id)
-            ->where('video_id', $video->id)
-            ->delete();
+        $like = $user->likes()->where('video_id', $video->id)->first();
+        
+        if ($like) {
+            $like->delete();
+            return true;
+        }
+        
+        return false;
     }
 
     public function getLikedVideos(User $user, int $perPage = 15)

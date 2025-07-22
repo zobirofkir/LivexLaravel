@@ -6,12 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Like\LikeRequest;
 use App\Http\Requests\Like\UnlikeRequest;
 use App\Models\Video;
-use App\Services\Facades\LikeFacade;
+use App\Services\Services\LikeService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 
 class LikeController extends Controller
 {
+    protected $likeService;
+
+    public function __construct(LikeService $likeService)
+    {
+        $this->likeService = $likeService;
+    }
+
     public function like(Video $video): JsonResponse
     {
         $user = Auth::user();
@@ -20,7 +27,7 @@ class LikeController extends Controller
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
         
-        $like = LikeFacade::like($user, $video);
+        $like = $this->likeService->like($user, $video);
         
         if ($like->wasRecentlyCreated) {
             return response()->json(['message' => 'Video liked successfully', 'liked' => true], 201);
@@ -29,16 +36,21 @@ class LikeController extends Controller
         }
     }
 
-    public function unlike(UnlikeRequest $request, Video $video): JsonResponse
+    public function unlike(Video $video): JsonResponse
     {
         $user = Auth::user();
         
         if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
-        
-        LikeFacade::unlike($user, $video);
-        return response()->json(['message' => 'Video unliked successfully']);
+
+        $result = $this->likeService->unlike($user, $video);
+
+        if ($result) {
+            return response()->json(['message' => 'Video unliked successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Video was not liked'], 200);
+        }
     }
 
     public function likedVideos(): JsonResponse
@@ -49,7 +61,7 @@ class LikeController extends Controller
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
         
-        $likedVideos = LikeFacade::getLikedVideos($user);
+        $likedVideos = $this->likeService->getLikedVideos($user);
         return response()->json($likedVideos);
     }
 
@@ -61,7 +73,7 @@ class LikeController extends Controller
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
         
-        $totalLikes = LikeFacade::getTotalLikes($user);
+        $totalLikes = $this->likeService->getTotalLikes($user);
         return response()->json(['total_likes' => $totalLikes]);
     }
 
@@ -73,7 +85,7 @@ class LikeController extends Controller
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
         
-        $isLiked = LikeFacade::isLiked($user, $video);
+        $isLiked = $this->likeService->isLiked($user, $video);
         return response()->json(['is_liked' => $isLiked]);
     }
 }
