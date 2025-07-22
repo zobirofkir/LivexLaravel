@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -100,14 +101,26 @@ class User extends Authenticatable
         return $this->hasMany(Offer::class);
     }
 
-    public function followers()
+    public function followers(): BelongsToMany
     {
-        return $this->hasMany(Follower::class, 'following_id');
+        return $this->belongsToMany(User::class, 'followers', 'following_id', 'follower_id');
     }
 
-    public function following()
+    public function following(): BelongsToMany
     {
-        return $this->hasMany(Follower::class, 'follower_id');
+        return $this->belongsToMany(User::class, 'followers', 'follower_id', 'following_id');
+    }
+
+    public function isFollowing(User $user): bool
+    {
+        return $this->following()->where('following_id', $user->id)->exists();
+    }
+
+    public function follow(User $user): void
+    {
+        if (!$this->isFollowing($user)) {
+            $this->following()->attach($user->id);
+        }
     }
 
     public function likes()
