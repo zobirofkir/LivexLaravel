@@ -10,6 +10,7 @@ use App\Services\Facades\FollowerFacade;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class FollowerController extends Controller
 {
@@ -33,11 +34,33 @@ class FollowerController extends Controller
         return response()->json(['message' => 'Successfully followed the user'], Response::HTTP_CREATED);
     }
 
-    public function unfollow(UnfollowRequest $request, User $user)
+    public function unfollow(Request $request, User $user)
     {
-        $follower = Auth::user();
-        FollowerFacade::unfollow($follower, $user);
-        return response()->json(['message' => 'Successfully unfollowed user']);
+        Log::info('Unfollow method called');
+
+        try {
+            $follower = Auth::user();
+            
+            if (!$follower) {
+                Log::error('No authenticated user found');
+                return response()->json(['message' => 'Unauthenticated'], 401);
+            }
+
+            Log::info("Unfollow attempt", ['follower_id' => $follower->id, 'following_id' => $user->id]);
+
+            $result = FollowerFacade::unfollow($follower, $user);
+            
+            Log::info("Unfollow result", ['result' => $result]);
+
+            if ($result) {
+                return response()->json(['message' => 'Successfully unfollowed user'], 200);
+            } else {
+                return response()->json(['message' => 'User was not being followed'], 400);
+            }
+        } catch (\Exception $e) {
+            Log::error("Unfollow error", ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
     }
 
     public function followers(User $user)
