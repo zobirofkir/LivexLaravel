@@ -35,4 +35,3 @@ require __DIR__.'/auth/offers.php';
  */
 require __DIR__.'/auth/profile-actions.php';
 
-Route::get('auth/followers/{user}', [FollowerController::class, 'followers']);

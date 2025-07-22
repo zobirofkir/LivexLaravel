@@ -19,9 +19,9 @@ Route::middleware('auth:api')->prefix('auth')->group(function () {
      */
     Route::post('/follow/{user}', [FollowerController::class, 'follow']);
     Route::post('/unfollow/{user}', [FollowerController::class, 'unfollow']);
-    Route::get('/followers/{user}', [FollowerController::class, 'followers']);
     Route::get('/following/{user}', [FollowerController::class, 'following']);
     Route::get('/is-following/{user}', [FollowerController::class, 'isFollowing']);
+    Route::get('/followers/{user}', [FollowerController::class, 'followers']);
 
     /**
      * Like routes
