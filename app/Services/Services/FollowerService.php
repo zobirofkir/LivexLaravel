@@ -23,9 +23,9 @@ class FollowerService implements FollowerConstructor
             ->delete();
     }
 
-    public function getFollowers(User $user, int $perPage = 15)
+    public function getFollowers(User $user)
     {
-        return $user->followers()->with('follower')->latest()->paginate($perPage);
+        return $user->followers()->get();
     }
 
     public function getFollowing(User $user, int $perPage = 15)
