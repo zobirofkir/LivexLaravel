@@ -34,4 +34,3 @@ require __DIR__.'/auth/offers.php';
  * Profile Actions routes
  */
 require __DIR__.'/auth/profile-actions.php';
-

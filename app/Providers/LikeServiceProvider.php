@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\Services\LikeService;
 use Illuminate\Support\ServiceProvider;
 
 class LikeServiceProvider extends ServiceProvider
@@ -11,7 +12,9 @@ class LikeServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind('LikeService', function ($app) { 
+            return new LikeService();
+        });
     }
 
     /**

@@ -11,10 +11,12 @@ class LikeService implements LikeConstructor
 {
     public function like(User $user, Video $video): Like
     {
-        return Like::firstOrCreate([
-            'user_id' => $user->id,
-            'video_id' => $video->id,
-        ]);
+        $like = Like::updateOrCreate(
+            ['user_id' => $user->id, 'video_id' => $video->id],
+            []
+        );
+
+        return $like;
     }
 
     public function unlike(User $user, Video $video): bool
