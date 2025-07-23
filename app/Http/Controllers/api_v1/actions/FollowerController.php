@@ -16,10 +16,6 @@ class FollowerController extends Controller
     {
         $currentUser = $request->user();
 
-        if ($currentUser->id === $user->id) {
-            return response()->json([], 400);
-        }
-
         if ($currentUser->isFollowing($user)) {
             return response()->json([], 400);
         }
