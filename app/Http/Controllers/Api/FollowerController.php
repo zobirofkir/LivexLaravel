@@ -17,11 +17,11 @@ class FollowerController extends Controller
         $currentUser = $request->user();
 
         if ($currentUser->id === $user->id) {
-            return response()->json(['message' => 'You cannot follow yourself'], 400);
+            return response()->json([], 400);
         }
 
         if ($currentUser->isFollowing($user)) {
-            return response()->json(['message' => 'You are already following this user'], 400);
+            return response()->json([], 400);
         }
 
         $follower = FollowerFacade::follow($currentUser, $user);
@@ -35,7 +35,7 @@ class FollowerController extends Controller
         
         $result = FollowerFacade::unfollow($currentUser, $user);
 
-        return response()->json(['success' => $result]);
+        return response()->json(['result' => $result]);
     }
 
     public function followers(User $user)
