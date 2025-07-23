@@ -20,13 +20,11 @@ class UserResource extends JsonResource
             'profile_image' => asset('storage/' . $this->profile_image),
             'is_live' => $this->is_live,
 
-            'videos' => VideoResource::collection($this->videos),
-            'offers' => OfferResource::collection($this->offers),
             'followers_count' => $this->followers()->count(),
             'following_count' => $this->following()->count(),
             'total_likes' => $this->totalLikes()->count(),
             'total_earnings' => $this->totalEarnings(),
-            'comments' => CommentResource::collection($this->comments),
+
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
