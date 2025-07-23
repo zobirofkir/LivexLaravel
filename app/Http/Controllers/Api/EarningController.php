@@ -15,10 +15,8 @@ class EarningController extends Controller
     {
         $user = Auth::user();
         $earnings = EarningFacade::getEarningHistory($user);
-        $totalEarnings = EarningFacade::getTotalEarnings($user);
 
-        return EarningResource::collection($earnings)
-            ->additional(['total_earnings' => $totalEarnings]);
+        return EarningResource::collection($earnings);
     }
 
     public function store(StoreEarningRequest $request): EarningResource
@@ -26,6 +24,6 @@ class EarningController extends Controller
         $user = Auth::user();
         $earning = EarningFacade::addEarning($user, $request->amount, $request->source);
 
-        return new EarningResource($earning);
+        return EarningResource::make($earning);
     }
 }
