@@ -1,7 +1,8 @@
 <?php
+
+use App\Http\Controllers\api_v1\auth\EmailAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\EmailAuthController;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

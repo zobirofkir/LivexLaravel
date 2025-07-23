@@ -1,8 +1,7 @@
 <?php
 
-use App\Http\Controllers\LiveController;
-use App\Http\Controllers\LiveKitTokenController;
-use App\Http\Controllers\LiveStreamController;
+use App\Http\Controllers\api_v1\live\LiveKitTokenController;
+use App\Http\Controllers\api_v1\live\LiveStreamController;
 use Illuminate\Support\Facades\Route;
 
 /**

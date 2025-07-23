@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api_v1\live;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\VideoRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\VideoResource;

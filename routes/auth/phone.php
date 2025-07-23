@@ -1,6 +1,7 @@
 <?php
+
+use App\Http\Controllers\api_v1\auth\PhoneAuthController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\PhoneAuthController;
 
 Route::prefix('auth/phone')->group(function () {
     Route::post('/send-otp', [PhoneAuthController::class, 'sendOTP']);

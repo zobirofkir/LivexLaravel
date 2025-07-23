@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\Api\EarningController;
-use App\Http\Controllers\Api\FollowerController;
-use App\Http\Controllers\Api\LikeController;
+use App\Http\Controllers\api_v1\actions\EarningController;
+use App\Http\Controllers\api_v1\actions\FollowerController;
+use App\Http\Controllers\api_v1\actions\LikeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

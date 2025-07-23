@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\OfferController;
+use App\Http\Controllers\api_v1\actions\OfferController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->prefix('auth/user')->group(function () {

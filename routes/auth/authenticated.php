@@ -1,8 +1,8 @@
 <?php
+
+use App\Http\Controllers\api_v1\auth\AuthUserController;
+use App\Http\Controllers\api_v1\live\VideoController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AuthUserController;
-use App\Http\Controllers\LiveStreamController;
-use App\Http\Controllers\VideoController;
 
 /**
  * Authenticated Routes
