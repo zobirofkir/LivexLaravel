@@ -25,7 +25,7 @@ class UserResource extends JsonResource
             'total_likes' => $this->totalLikes()->count(),
             'total_earnings' => $this->totalEarnings(),
             'comments_count' => $this->comments()->count(),
-            'videos' => $this->videos, // Include videos here
+            'videos' => VideoResource::collection($this->videos), // Use VideoResource for videos
 
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
