@@ -75,7 +75,7 @@ class User extends Authenticatable
      * 
      * @return HasMany
      */
-    public function videos() : HasMany
+    public function videos()
     {
         return $this->hasMany(Video::class);
     }

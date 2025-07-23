@@ -58,4 +58,12 @@ class AuthUserService implements AuthUserConstructor
         return Auth::user()->token()->revoke();
     }
 
+    /**
+     * List all reels created by the authenticated user.
+     */
+    public function listUserReels()
+    {
+        $user = Auth::user();
+        return $user->videos; // Assuming 'videos' is the relationship name in the User model
+    }
 }
