@@ -24,6 +24,7 @@ class UserResource extends JsonResource
             'following_count' => $this->following()->count(),
             'total_likes' => $this->totalLikes()->count(),
             'total_earnings' => $this->totalEarnings(),
+            'comments_count' => $this->comments()->count(),
 
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
