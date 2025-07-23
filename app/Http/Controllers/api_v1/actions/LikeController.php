@@ -61,4 +61,10 @@ class LikeController extends Controller
         $isLiked = $this->likeService->isLiked($user, $video);
         return response()->json($isLiked);
     }
+
+    public function totalLikesForVideo(Video $video): JsonResponse
+    {
+        $totalLikes = $video->likes()->count();
+        return response()->json(['video_id' => $video->id, 'total_likes' => $totalLikes]);
+    }
 }

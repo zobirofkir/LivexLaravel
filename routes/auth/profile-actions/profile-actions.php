@@ -31,4 +31,5 @@ Route::middleware('auth:api')->prefix('auth')->group(function () {
     Route::get('/liked-videos', [LikeController::class, 'likedVideos']);
     Route::get('/total-likes', [LikeController::class, 'totalLikes']);
     Route::get('/is-liked/{video}', [LikeController::class, 'isLiked']);
+    Route::get('/like/{video}', [LikeController::class, 'totalLikesForVideo']);
 });
