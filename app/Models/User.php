@@ -142,4 +142,9 @@ class User extends Authenticatable
     {
         return $this->earnings()->sum('amount');
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

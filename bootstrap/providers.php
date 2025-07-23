@@ -3,6 +3,7 @@
 return [
     App\Providers\AppServiceProvider::class,
     App\Providers\AuthUserServiceProvider::class,
+    App\Providers\CommentServiceProvider::class,
     App\Providers\EarningServiceProvider::class,
     App\Providers\EmailAuthServiceProvider::class,
     App\Providers\FilamentComponentServiceProvider::class,

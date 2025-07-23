@@ -17,6 +17,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('follower.service', function ($app) {
             return new FollowerService();
         });
+        $this->app->singleton('CommentService', function ($app) {
+            return new \App\Services\Services\CommentService();
+        });
     }
 
     /**

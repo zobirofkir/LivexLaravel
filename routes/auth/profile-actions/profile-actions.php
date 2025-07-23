@@ -3,6 +3,7 @@
 use App\Http\Controllers\api_v1\actions\EarningController;
 use App\Http\Controllers\api_v1\actions\FollowerController;
 use App\Http\Controllers\api_v1\actions\LikeController;
+use App\Http\Controllers\api_v1\actions\CommentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,4 +33,10 @@ Route::middleware('auth:api')->prefix('auth')->group(function () {
     Route::get('/total-likes', [LikeController::class, 'totalLikes']);
     Route::get('/is-liked/{video}', [LikeController::class, 'isLiked']);
     Route::get('/like/{video}', [LikeController::class, 'totalLikesForVideo']);
+
+    /**
+     * Comment routes
+     */
+    Route::post('/reel/{video}/comment', [CommentController::class, 'addComment']);
+    Route::get('/reel/{video}/comments', [CommentController::class, 'listComments']);
 });
