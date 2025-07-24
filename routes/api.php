@@ -34,3 +34,8 @@ require __DIR__.'/auth/offers/offers.php';
  * Profile Actions routes
  */
 require __DIR__.'/auth/profile-actions/profile-actions.php';
+
+/**
+ * User routes
+ */
+require __DIR__.'/auth/users/users.php';
