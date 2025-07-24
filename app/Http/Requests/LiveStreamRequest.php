@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\LiveCategoryEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class LiveStreamRequest extends FormRequest
 {
@@ -24,7 +26,8 @@ class LiveStreamRequest extends FormRequest
         return [
             'title' => 'required|string|max:255|unique:live_streams',
             'is_live' => 'boolean',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',    
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'live_category' => ['nullable', new Enum(LiveCategoryEnum::class)],
         ];
     }
 }

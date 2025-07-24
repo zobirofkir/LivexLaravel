@@ -15,6 +15,7 @@ class LiveStreamResource extends JsonResource
             'stream_key' => $this->stream_key,
             'thumbnail' => $this->thumbnail ? asset('storage/' . $this->thumbnail) : null,
             'is_live' => $this->is_live,
+            'live_category' => $this->live_category ? $this->live_category->value : null,
             'user' => $this->whenLoaded('user', function () {
                 return [
                     'id' => $this->user->id,

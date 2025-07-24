@@ -2,6 +2,7 @@
 
 namespace App\Services\Services;
 
+use App\Enums\LiveCategoryEnum;
 use App\Http\Requests\LiveStreamRequest;
 use App\Http\Resources\LiveStreamResource;
 use App\Models\LiveStream;
@@ -35,6 +36,11 @@ class LiveStreamService implements LiveStreamConstructor
             $data['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
         }
         
+        // Set default category if not provided
+        if (!isset($data['live_category'])) {
+            $data['live_category'] = LiveCategoryEnum::NORMAL;
+        }
+        
         $stream = LiveStream::create(array_merge(
             $data,
             [
@@ -66,9 +72,10 @@ class LiveStreamService implements LiveStreamConstructor
             'title' => 'string',
             'is_live' => 'boolean',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'live_category' => ['nullable', new \Illuminate\Validation\Rules\Enum(LiveCategoryEnum::class)],
         ]);
 
-        $data = $request->only(['title', 'is_live']);
+        $data = $request->only(['title', 'is_live', 'live_category']);
         
         if ($request->hasFile('thumbnail')) {
             if ($stream->thumbnail) {
