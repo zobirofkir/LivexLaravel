@@ -21,7 +21,7 @@ class EarningResource extends Resource
     
     protected static ?string $navigationLabel = 'User Earnings';
     
-    protected static ?string $navigationGroup = 'Finance Management';
+    protected static ?string $navigationGroup = 'Finance ';
     
     protected static ?int $navigationSort = 3;
 
