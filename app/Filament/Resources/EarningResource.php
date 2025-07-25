@@ -29,20 +29,21 @@ class EarningResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('user_id')
-                    ->label('User')
-                    ->options(function () {
-                        return \App\Models\User::query()
-                            ->whereNotNull('name') // ✅ تأكد أن الاسم موجود
-                            ->where('name', '!=', '') // ✅ تأكد أنه غير فارغ
-                            ->get()
-                            ->mapWithKeys(fn ($user) => [$user->id => $user->name])
-                            ->toArray();
-                    })
-                    ->searchable()
-                    ->required()
-                    ->preload()
-                    ->columnSpanFull(),
+                // Select::make('user_id')
+                //     ->label('User')
+                //     ->options(function () {
+                //         return User::query()
+                //             ->whereNotNull('name') 
+                //             ->get()
+                //             ->mapWithKeys(function ($user) {
+                //                 return [$user->id => $user->name];
+                //             })
+                //             ->toArray();
+                //     })
+                //     ->searchable()
+                //     ->required()
+                //     ->preload()
+                //     ->columnSpanFull(),
                     
                 Forms\Components\TextInput::make('amount')
                     ->label('Amount')
