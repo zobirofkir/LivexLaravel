@@ -31,10 +31,11 @@ class EarningResource extends Resource
                 Forms\Components\Select::make('user_id')
                     ->label('User')
                     ->options(function() {
-                        // Filter out users with null names and provide a fallback for display
+                        // Ensure all labels are strings by using null coalescing operator
                         return User::all()->mapWithKeys(function ($user) {
+                            // Convert null names to string to avoid null labels
                             $displayName = $user->name ?? "User #{$user->id}";
-                            return [$user->id => $displayName];
+                            return [$user->id => (string) $displayName]; // Cast to string explicitly
                         })->toArray();
                     })
                     ->searchable()
