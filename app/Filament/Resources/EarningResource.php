@@ -32,12 +32,11 @@ class EarningResource extends Resource
                 Select::make('user_id')
                     ->label('User')
                     ->options(function () {
-                        return User::query()
-                            ->whereNotNull('name')
+                        return \App\Models\User::query()
+                            ->whereNotNull('name') // ✅ تأكد أن الاسم موجود
+                            ->where('name', '!=', '') // ✅ تأكد أنه غير فارغ
                             ->get()
-                            ->mapWithKeys(function ($user) {
-                                return [$user->id => $user->name];
-                            })
+                            ->mapWithKeys(fn ($user) => [$user->id => $user->name])
                             ->toArray();
                     })
                     ->searchable()
