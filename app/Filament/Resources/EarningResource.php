@@ -29,20 +29,20 @@ class EarningResource extends Resource
     {
         return $form
             ->schema([
-            Select::make('user_id')
-                ->label('User')
-                ->options(function () {
-                    return User::all()->mapWithKeys(function ($user) {
-                        $displayName = trim((string) ($user->name ?? '')) !== ''
-                            ? $user->name
-                            : "User #{$user->id}";
-                        return [$user->id => (string) $displayName];
-                    })->toArray();
-                })
-                ->searchable()
-                ->required()
-                ->preload()
-                ->columnSpanFull(),
+Select::make('user_id')
+    ->label('User')
+    ->options(function () {
+        return User::all()->mapWithKeys(function ($user) {
+            $displayName = ($user->name && trim($user->name) !== '')
+                ? $user->name
+                : "User #{$user->id}";
+            return [$user->id => (string) $displayName];
+        })->toArray();
+    })
+    ->searchable()
+    ->required()
+    ->preload()
+    ->columnSpanFull(),
                     
                 Forms\Components\TextInput::make('amount')
                     ->label('Amount')
