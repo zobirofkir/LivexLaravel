@@ -33,7 +33,12 @@ class LikeController extends Controller
     {
         $user = Auth::user();
         
-        $result = $this->likeService->unlike($user, $video);
+        // Check if the user can unlike the video
+        if ($this->likeService->canUnlike($user, $video)) {
+            $result = $this->likeService->unlike($user, $video);
+        } else {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
 
         return response()->json($result);
     }
@@ -58,7 +63,13 @@ class LikeController extends Controller
     {
         $user = Auth::user();        
         
-        $isLiked = $this->likeService->isLiked($user, $video);
+        // Check if the user can check if the video is liked
+        if ($this->likeService->canCheckIsLiked($user, $video)) {
+            $isLiked = $this->likeService->isLiked($user, $video);
+        } else {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         return response()->json($isLiked);
     }
 

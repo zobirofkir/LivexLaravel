@@ -21,7 +21,9 @@ class LikeService implements LikeConstructor
 
     public function unlike(User $user, Video $video): bool
     {
-        $like = $user->likes()->where('video_id', $video->id)->first();
+        $like = Like::where('user_id', $user->id)
+                    ->where('video_id', $video->id)
+                    ->first();
         
         if ($like) {
             $like->delete();
@@ -38,11 +40,23 @@ class LikeService implements LikeConstructor
 
     public function getTotalLikes(User $user): int
     {
-        return $user->totalLikes()->count();
+        return $user->likes()->count(); 
     }
 
     public function isLiked(User $user, Video $video): bool
     {
-        return $user->likes()->where('video_id', $video->id)->exists();
+        return Like::where('user_id', $user->id)
+                  ->where('video_id', $video->id)
+                  ->exists();
+    }
+
+    public function canUnlike(User $user, Video $video): bool
+    {
+        return $this->isLiked($user, $video);
+    }
+
+    public function canCheckIsLiked(User $user, Video $video): bool
+    {
+        return $user !== null;
     }
 }
