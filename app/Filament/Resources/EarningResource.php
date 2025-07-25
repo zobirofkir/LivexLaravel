@@ -6,6 +6,7 @@ use App\Filament\Resources\EarningResource\Pages;
 use App\Models\Earning;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -28,7 +29,7 @@ class EarningResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
+                Select::make('user_id')
                     ->label('User')
                     ->options(function() {
                         // Ensure all labels are strings by using null coalescing operator
@@ -51,7 +52,7 @@ class EarningResource extends Resource
                     ->prefix('$')
                     ->columnSpan(1),
                     
-                Forms\Components\Select::make('source')
+                Select::make('source')
                     ->label('Source')
                     ->options([
                         'live_stream' => 'Live Stream',
