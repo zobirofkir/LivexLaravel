@@ -33,10 +33,8 @@ class EarningResource extends Resource
                 ->label('User')
                 ->options(function () {
                     return User::all()->mapWithKeys(function ($user) {
-                        $displayName = trim((string) ($user->name ?? '')) !== ''
-                            ? $user->name
-                            : "User #{$user->id}";
-                        return [$user->id => (string) $displayName];
+                        $displayName = $user->name ? (string) $user->name : "User #{$user->id}";
+                        return [$user->id => $displayName];
                     })->toArray();
                 })
                 ->searchable()
