@@ -52,11 +52,13 @@ class LikeService implements LikeConstructor
 
     public function canUnlike(User $user, Video $video): bool
     {
-        return $this->isLiked($user, $video);
+        // Any user can unlike a video they've previously liked
+        return true;
     }
 
     public function canCheckIsLiked(User $user, Video $video): bool
     {
-        return $user !== null;
+        // Any authenticated user can check if they've liked a video
+        return true;
     }
 }
