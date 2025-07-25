@@ -29,20 +29,20 @@ class EarningResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('user_id')
-                    ->label('User')
-                    ->options(function() {
-                        // Ensure all labels are strings by using null coalescing operator
-                        return User::all()->mapWithKeys(function ($user) {
-                            // Convert null names to string to avoid null labels
-                            $displayName = $user->name ?? "User #{$user->id}";
-                            return [$user->id => (string) $displayName]; // Cast to string explicitly
-                        })->toArray();
-                    })
-                    ->searchable()
-                    ->required()
-                    ->preload()
-                    ->columnSpanFull(),
+            Select::make('user_id')
+                ->label('User')
+                ->options(function () {
+                    return User::all()->mapWithKeys(function ($user) {
+                        $displayName = trim((string) ($user->name ?? '')) !== ''
+                            ? $user->name
+                            : "User #{$user->id}";
+                        return [$user->id => (string) $displayName];
+                    })->toArray();
+                })
+                ->searchable()
+                ->required()
+                ->preload()
+                ->columnSpanFull(),
                     
                 Forms\Components\TextInput::make('amount')
                     ->label('Amount')
