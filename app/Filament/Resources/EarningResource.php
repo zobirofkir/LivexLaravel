@@ -32,17 +32,24 @@ class EarningResource extends Resource
             Select::make('user_id')
                 ->label('User')
                 ->options(function () {
-                    return User::all()->mapWithKeys(function ($user) {
-                        $displayName = trim((string) ($user->name ?? '')) !== ''
-                            ? $user->name
-                            : "User #{$user->id}";
-                        return [$user->id => (string) $displayName];
-                    })->toArray();
+                    return User::all()
+                        ->filter(fn ($user) => !is_null($user->id)) // تأكد أن id موجود
+                        ->mapWithKeys(function ($user) {
+                            $label = $user->name;
+
+                            if (is_null($label) || trim((string)$label) === '') {
+                                $label = "User #{$user->id}";
+                            }
+
+                            return [$user->id => (string) $label];
+                        })
+                        ->toArray();
                 })
                 ->searchable()
                 ->required()
                 ->preload()
-                ->columnSpanFull(),
+                ->columnSpanFull()
+                ->hint('If you get errors, make sure all users have names'),
                     
                 Forms\Components\TextInput::make('amount')
                     ->label('Amount')
