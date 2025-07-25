@@ -17,7 +17,6 @@ class EditEarning extends EditRecord
             Actions\Action::make('viewUser')
                 ->label('View User Profile')
                 ->icon('heroicon-o-user')
-                ->url(fn () => route('filament.admin.resources.users.edit', ['record' => $this->record->user_id]))
                 ->visible(fn () => class_exists('\App\Filament\Resources\UserResource')),
         ];
     }
