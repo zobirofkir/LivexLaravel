@@ -25,7 +25,8 @@ class CreateEarning extends CreateRecord
         return EarningFacade::addEarning(
             $user,
             $data['amount'],
-            $data['source']
+            $data['source'],
+            $data['notes'] ?? null
         );
     }
     

@@ -30,7 +30,13 @@ class EarningResource extends Resource
             ->schema([
                 Forms\Components\Select::make('user_id')
                     ->label('User')
-                    ->options(User::all()->pluck('name', 'id'))
+                    ->options(function() {
+                        // Filter out users with null names and provide a fallback for display
+                        return User::all()->mapWithKeys(function ($user) {
+                            $displayName = $user->name ?? "User #{$user->id}";
+                            return [$user->id => $displayName];
+                        })->toArray();
+                    })
                     ->searchable()
                     ->required()
                     ->preload()
@@ -72,7 +78,8 @@ class EarningResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('User')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(fn ($state, $record) => $state ?? "User #{$record->user_id}"),
                     
                 Tables\Columns\TextColumn::make('amount')
                     ->label('Amount')
@@ -146,7 +153,7 @@ class EarningResource extends Resource
                             // Export logic would go here
                             return response()->streamDownload(function () use ($records) {
                                 echo $records->map(fn ($record) => [
-                                    'User' => $record->user->name,
+                                    'User' => $record->user->name ?? "User #{$record->user_id}",
                                     'Amount' => $record->amount,
                                     'Source' => $record->source,
                                     'Date' => $record->created_at->format('Y-m-d H:i:s'),

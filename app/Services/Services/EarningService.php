@@ -4,7 +4,7 @@ namespace App\Services\Services;
 
 use App\Models\Earning;
 use App\Models\User;
-use App\Services\Contracts\EarningConstructor;
+use App\Services\Constructors\EarningConstructor;
 
 class EarningService implements EarningConstructor
 {
@@ -34,9 +34,16 @@ class EarningService implements EarningConstructor
      */
     public function getTotalEarnings(User $user): float
     {
-        return $user->earnings()->sum('amount');
+        return $user->earnings()->sum('amount') ?? 0;
     }
 
+    /**
+     * Get the earning history for a user.
+     *
+     * @param User $user
+     * @param int $perPage
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
     public function getEarningHistory(User $user, int $perPage = 15)
     {
         return $user->earnings()->latest()->paginate($perPage);
