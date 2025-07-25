@@ -21,7 +21,7 @@ class EarningResource extends Resource
     
     protected static ?string $navigationLabel = 'User Earnings';
     
-    protected static ?string $navigationGroup = 'Finance ';
+    protected static ?string $navigationGroup = 'Finance Management';
     
     protected static ?int $navigationSort = 3;
 
@@ -133,7 +133,11 @@ class EarningResource extends Resource
                     }),
                     
                 Tables\Filters\SelectFilter::make('user_id')
-                    ->relationship('user', 'name')
+                    ->relationship('user', 'name', function ($query) {
+                        return $query->selectRaw('id, COALESCE(name, CONCAT("User #", id)) as name')
+                            ->orderBy('name');
+                    })
+                    ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name ?? "User #{$value}")
                     ->searchable()
                     ->preload()
                     ->label('User'),
@@ -150,7 +154,6 @@ class EarningResource extends Resource
                         ->label('Export Selected')
                         ->icon('heroicon-o-document-arrow-down')
                         ->action(function ($records) {
-                            // Export logic would go here
                             return response()->streamDownload(function () use ($records) {
                                 echo $records->map(fn ($record) => [
                                     'User' => $record->user->name ?? "User #{$record->user_id}",

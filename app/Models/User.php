@@ -147,4 +147,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class);
     }
+
+    // Add this accessor to the User model
+    public function getNameAttribute($value)
+    {
+        return $value ?: "User #{$this->id}";
+    }
 }
