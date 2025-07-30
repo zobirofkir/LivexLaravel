@@ -21,7 +21,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = $this->userService->getAllUsersOrderedByDesc();
+        $users = $this->userService->getAllUsersExceptCurrentAndAdmin();
         return UserResource::collection($users);
     }
 
