@@ -21,7 +21,6 @@ Route::middleware('auth:api')->prefix("auth/chats")->group(function () {
 /**
  * Test route to trigger a broadcast event for a message sent event
  */
-
 Route::get('/test-broadcast', function () {
     $message = Message::create([
         'sender_id' => 1, 
