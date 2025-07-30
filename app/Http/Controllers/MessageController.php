@@ -42,8 +42,17 @@ class MessageController extends Controller
     {
         $user = Auth::user();
 
-        $sentMessages = $user->sentMessages()->with('receiver')->get();
-        $receivedMessages = $user->receivedMessages()->with('sender')->get();
+        // Get sent messages grouped by receiver
+        $sentMessages = $user->sentMessages()
+            ->with('receiver')
+            ->get()
+            ->groupBy('receiver_id');
+
+        // Get received messages grouped by sender
+        $receivedMessages = $user->receivedMessages()
+            ->with('sender')
+            ->get()
+            ->groupBy('sender_id');
 
         return response()->json([
             'sent_messages' => $sentMessages,
