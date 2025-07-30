@@ -39,3 +39,8 @@ require __DIR__.'/auth/profile-actions/profile-actions.php';
  * User routes
  */
 require __DIR__.'/auth/users/users.php';
+
+/**
+ * Chats routes
+ */
+require __DIR__.'/auth/chats/chats.php';
