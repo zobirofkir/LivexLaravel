@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MessageController;
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('auth:api')->prefix("auth/chats")->group(function () {
     
     /**
      * Route to send a message
