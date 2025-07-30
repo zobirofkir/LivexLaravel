@@ -4,6 +4,7 @@ use App\Events\MessageSent;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MessageController;
 use App\Models\Message;
+use Illuminate\Support\Facades\Auth;
 
 Route::middleware('auth:api')->prefix("auth/chats")->group(function () {
     
@@ -22,8 +23,10 @@ Route::middleware('auth:api')->prefix("auth/chats")->group(function () {
  * Test route to trigger a broadcast event for a message sent event
  */
 Route::get('/test-broadcast', function () {
+    $user = Auth::user(); 
+
     $message = Message::create([
-        'sender_id' => 1, 
+        'sender_id' => $user->id, 
         'receiver_id' => 2, 
         'content' => 'This is a test message',
     ]);
@@ -31,4 +34,4 @@ Route::get('/test-broadcast', function () {
     broadcast(new MessageSent($message))->toOthers();
 
     return response()->json(['status' => 'Broadcast event triggered']);
-});
+})->middleware('auth:api'); 
