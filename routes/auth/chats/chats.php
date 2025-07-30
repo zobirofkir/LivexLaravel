@@ -27,7 +27,7 @@ Route::get('/test-broadcast', function () {
 
     $message = Message::create([
         'sender_id' => $user->id, 
-        'receiver_id' => 4, 
+        'receiver_id' => 4, // Ensure this is a valid user ID
         'content' => 'This is a test message',
     ]);
 
