@@ -148,9 +148,28 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    // Add this accessor to the User model
+    /**
+     * Add this accessor to the User model
+     */
     public function getNameAttribute($value)
     {
         return $value ?: "User #{$this->id}";
     }
+
+    /**
+     * Get the messages sent by the user.
+     */
+    public function sentMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    /**
+     * Get the messages received by the user.
+     */
+    public function receivedMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
 }
