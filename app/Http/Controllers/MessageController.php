@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MessageRequest;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
@@ -14,15 +16,12 @@ class MessageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function sendMessage(Request $request)
+    public function sendMessage(MessageRequest $request)
     {
-        $request->validate([
-            'receiver_id' => 'required|exists:users,id',
-            'content' => 'required|string',
-        ]);
+        $request->validated();
 
         $message = Message::create([
-            'sender_id' => auth()->id(),
+            'sender_id' => Auth::id(),
             'receiver_id' => $request->receiver_id,
             'content' => $request->content,
         ]);
@@ -37,7 +36,7 @@ class MessageController extends Controller
      */
     public function getMessages()
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         $sentMessages = $user->sentMessages()->with('receiver')->get();
         $receivedMessages = $user->receivedMessages()->with('sender')->get();
