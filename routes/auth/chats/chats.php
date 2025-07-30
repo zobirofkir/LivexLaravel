@@ -14,7 +14,7 @@ Route::middleware('auth:api')->prefix("auth/chats")->group(function () {
     Route::post('/messages/send', [MessageController::class, 'sendMessage'])->name('messages.send');
 
     /**
-     * Route to get all messages for the authenticated user
+     * Route to get messages for a specific user
      */
-    Route::get('/messages', [MessageController::class, 'getMessages'])->name('messages.index');
+    Route::get('/messages/{userId}', [MessageController::class, 'getMessages'])->name('messages.index');
 });

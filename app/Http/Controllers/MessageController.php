@@ -38,21 +38,21 @@ class MessageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getMessages()
+    public function getMessages(Request $request, $userId)
     {
         $user = Auth::user();
 
-        // Get sent messages grouped by receiver
+        // Get sent messages to the specified user
         $sentMessages = $user->sentMessages()
+            ->where('receiver_id', $userId)
             ->with('receiver')
-            ->get()
-            ->groupBy('receiver_id');
+            ->get();
 
-        // Get received messages grouped by sender
+        // Get received messages from the specified user
         $receivedMessages = $user->receivedMessages()
+            ->where('sender_id', $userId)
             ->with('sender')
-            ->get()
-            ->groupBy('sender_id');
+            ->get();
 
         return response()->json([
             'sent_messages' => $sentMessages,
