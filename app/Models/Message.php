@@ -11,6 +11,17 @@ class Message extends Model
     use HasFactory;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'sender_id',
+        'receiver_id',
+        'content',
+    ];
+
+    /**
      * Get the sender of the message.
      */
     public function sender(): BelongsTo
