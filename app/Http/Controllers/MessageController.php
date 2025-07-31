@@ -42,44 +42,30 @@ class MessageController extends Controller
     {
         $user = Auth::user();
 
-        // Get sent messages to the specified user
-        $sentMessages = $user->sentMessages()
-            ->where('receiver_id', $userId)
-            ->with('receiver')
-            ->get()
-            ->map(function ($message) {
-                return [
-                    'id' => $message->id,
-                    'content' => $message->content,
-                    'sender_id' => $message->sender_id,
-                    'receiver_id' => $message->receiver_id,
-                    'user' => $message->receiver, // The receiver is the other participant
-                ];
-            });
-
-        // Get received messages from the specified user
-        $receivedMessages = $user->receivedMessages()
-            ->where('sender_id', $userId)
-            ->with('sender')
-            ->get()
-            ->map(function ($message) {
-                return [
-                    'id' => $message->id,
-                    'content' => $message->content,
-                    'sender_id' => $message->sender_id,
-                    'receiver_id' => $message->receiver_id,
-                    'user' => $message->sender, // The sender is the other participant
-                ];
-            });
-
-        // Combine both sent and received messages
-        $allMessages = $sentMessages->merge($receivedMessages);
+        // Get all messages between the authenticated user and the specified user
+        $messages = Message::where(function ($query) use ($user, $userId) {
+            $query->where('sender_id', $user->id)
+                  ->where('receiver_id', $userId);
+        })->orWhere(function ($query) use ($user, $userId) {
+            $query->where('sender_id', $userId)
+                  ->where('receiver_id', $user->id);
+        })->with(['sender', 'receiver'])
+          ->get()
+          ->map(function ($message) use ($user) {
+              return [
+                  'id' => $message->id,
+                  'content' => $message->content,
+                  'sender_id' => $message->sender_id,
+                  'receiver_id' => $message->receiver_id,
+                  'user' => $message->sender_id === $user->id ? $message->receiver : $message->sender, // The other participant
+              ];
+          });
 
         // Sort messages by created_at timestamp
-        $allMessages = $allMessages->sortBy('created_at');
+        $messages = $messages->sortBy('created_at');
 
         return response()->json([
-            'messages' => $allMessages->values()->all(),
+            'messages' => $messages->values()->all(),
         ]);
     }
 }
