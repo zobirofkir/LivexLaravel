@@ -17,4 +17,9 @@ Route::middleware('auth:api')->prefix("auth/chats")->group(function () {
      * Route to get messages for a specific user
      */
     Route::get('/messages/{userId}', [MessageController::class, 'getMessages'])->name('messages.index');
+
+    /**
+     * Route to mark a message as read
+     */
+    Route::post('/messages/{messageId}/read', [MessageController::class, 'markAsRead'])->name('messages.markAsRead');
 });

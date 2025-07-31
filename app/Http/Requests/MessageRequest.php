@@ -24,6 +24,8 @@ class MessageRequest extends FormRequest
         return [
             'receiver_id' => 'required|exists:users,id',
             'content' => 'required|string',
+            'read' => 'sometimes|boolean',
+            'unread' => 'sometimes|boolean',
         ];
     }
 }

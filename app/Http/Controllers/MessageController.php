@@ -25,6 +25,8 @@ class MessageController extends Controller
             'sender_id' => Auth::id(),
             'receiver_id' => $request->receiver_id,
             'content' => $request->content,
+            'read' => $request->has('read') ? $request->read : false,
+            'unread' => $request->has('unread') ? $request->unread : true,
         ]);
 
         // Broadcast the message
@@ -65,6 +67,8 @@ class MessageController extends Controller
                   'sender_id' => $message->sender_id,
                   'receiver_id' => $message->receiver_id,
                   'created_at' => $message->created_at,
+                  'read' => $message->read,
+                  'unread' => $message->unread,
                   'user' => [
                       'id' => $otherParticipant->id,
                       'name' => $otherParticipant->name,
@@ -77,5 +81,24 @@ class MessageController extends Controller
         return response()->json([
             'messages' => $messages->values()->all(),
         ]);
+    }
+
+    /**
+     * Mark a message as read.
+     */
+    public function markAsRead(Request $request, $messageId)
+    {
+        $message = Message::findOrFail($messageId);
+
+        // Only receiver can mark as read
+        if ($message->receiver_id !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $message->read = true;
+        $message->unread = false;
+        $message->save();
+
+        return response()->json(['message' => 'Message marked as read', 'data' => $message]);
     }
 }
