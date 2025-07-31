@@ -73,9 +73,6 @@ class MessageController extends Controller
               ];
           });
 
-        // Sort messages by created_at timestamp
-        $messages = $messages->sortBy('created_at');
-
         return response()->json([
             'messages' => $messages->values()->all(),
         ]);
