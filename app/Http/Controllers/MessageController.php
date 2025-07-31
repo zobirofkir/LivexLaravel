@@ -75,8 +75,11 @@ class MessageController extends Controller
         // Combine both sent and received messages
         $allMessages = $sentMessages->merge($receivedMessages);
 
+        // Sort messages by created_at timestamp
+        $allMessages = $allMessages->sortBy('created_at');
+
         return response()->json([
-            'messages' => $allMessages,
+            'messages' => $allMessages->values()->all(),
         ]);
     }
 }
