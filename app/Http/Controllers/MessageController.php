@@ -64,6 +64,7 @@ class MessageController extends Controller
                   'content' => $message->content,
                   'sender_id' => $message->sender_id,
                   'receiver_id' => $message->receiver_id,
+                  'created_at' => $message->created_at,
                   'user' => [
                       'id' => $otherParticipant->id,
                       'name' => $otherParticipant->name,
