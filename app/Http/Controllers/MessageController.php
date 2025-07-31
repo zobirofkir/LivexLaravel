@@ -51,7 +51,8 @@ class MessageController extends Controller
                 return [
                     'id' => $message->id,
                     'content' => $message->content,
-                    'type' => 'sent',
+                    'sender_id' => $message->sender_id,
+                    'receiver_id' => $message->receiver_id,
                     'user' => $message->receiver,
                 ];
             });
@@ -65,7 +66,8 @@ class MessageController extends Controller
                 return [
                     'id' => $message->id,
                     'content' => $message->content,
-                    'type' => 'received',
+                    'sender_id' => $message->sender_id,
+                    'receiver_id' => $message->receiver_id,
                     'user' => $message->sender,
                 ];
             });
