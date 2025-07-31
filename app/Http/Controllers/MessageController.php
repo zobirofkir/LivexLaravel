@@ -52,12 +52,20 @@ class MessageController extends Controller
         })->with(['sender', 'receiver'])
           ->get()
           ->map(function ($message) use ($user) {
+              // Determine the other participant
+              $otherParticipant = $message->sender_id === $user->id ? $message->receiver : $message->sender;
+
               return [
                   'id' => $message->id,
                   'content' => $message->content,
                   'sender_id' => $message->sender_id,
                   'receiver_id' => $message->receiver_id,
-                  'user' => $message->sender_id === $user->id ? $message->receiver : $message->sender, // The other participant
+                  'user' => [
+                      'id' => $otherParticipant->id,
+                      'name' => $otherParticipant->name,
+                      'email' => $otherParticipant->email,
+                      // Add any other fields you need from the user model
+                  ],
               ];
           });
 
