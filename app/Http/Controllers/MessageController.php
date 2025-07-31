@@ -46,17 +46,35 @@ class MessageController extends Controller
         $sentMessages = $user->sentMessages()
             ->where('receiver_id', $userId)
             ->with('receiver')
-            ->get();
+            ->get()
+            ->map(function ($message) {
+                return [
+                    'id' => $message->id,
+                    'content' => $message->content,
+                    'type' => 'sent',
+                    'user' => $message->receiver,
+                ];
+            });
 
         // Get received messages from the specified user
         $receivedMessages = $user->receivedMessages()
             ->where('sender_id', $userId)
             ->with('sender')
-            ->get();
+            ->get()
+            ->map(function ($message) {
+                return [
+                    'id' => $message->id,
+                    'content' => $message->content,
+                    'type' => 'received',
+                    'user' => $message->sender,
+                ];
+            });
+
+        // Combine both sent and received messages
+        $allMessages = $sentMessages->merge($receivedMessages);
 
         return response()->json([
-            'sent_messages' => $sentMessages,
-            'received_messages' => $receivedMessages,
+            'messages' => $allMessages,
         ]);
     }
 }
