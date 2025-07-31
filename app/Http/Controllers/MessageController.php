@@ -53,7 +53,7 @@ class MessageController extends Controller
                     'content' => $message->content,
                     'sender_id' => $message->sender_id,
                     'receiver_id' => $message->receiver_id,
-                    'user' => $message->receiver,
+                    'user' => $message->receiver, // The receiver is the other participant
                 ];
             });
 
@@ -68,7 +68,7 @@ class MessageController extends Controller
                     'content' => $message->content,
                     'sender_id' => $message->sender_id,
                     'receiver_id' => $message->receiver_id,
-                    'user' => $message->sender,
+                    'user' => $message->sender, // The sender is the other participant
                 ];
             });
 
