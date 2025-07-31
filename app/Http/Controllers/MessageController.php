@@ -84,17 +84,27 @@ class MessageController extends Controller
     }
 
     /**
-     * Mark a message as read.
+     * Mark a message as read or get its read/unread status.
      */
     public function markAsRead(Request $request, $messageId)
     {
         $message = Message::findOrFail($messageId);
 
-        // Only receiver can mark as read
+        // Only receiver can mark as read or view status
         if ($message->receiver_id !== Auth::id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
+        if ($request->isMethod('get')) {
+            // Return read/unread status
+            return response()->json([
+                'id' => $message->id,
+                'read' => $message->read,
+                'unread' => $message->unread,
+            ]);
+        }
+
+        // POST: mark as read
         $message->read = true;
         $message->unread = false;
         $message->save();
