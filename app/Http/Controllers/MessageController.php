@@ -78,8 +78,12 @@ class MessageController extends Controller
               ];
           });
 
+        // Count unread messages
+        $unreadCount = $messages->where('unread', true)->count();
+
         return response()->json([
             'messages' => $messages->values()->all(),
+            'unread_count' => $unreadCount,
         ]);
     }
 
