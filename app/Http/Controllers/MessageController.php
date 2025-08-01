@@ -141,6 +141,6 @@ class MessageController extends Controller
             ];
         });
 
-        return response()->json(['unread_messages' => $unreadMessages->values()->all()]);
+        return response()->json(['unread_messages' => $unreadMessages->values()->all(), 'unread_count' => $unreadMessages->count()]);
     }
 }
