@@ -113,4 +113,34 @@ class MessageController extends Controller
 
         return response()->json(['message' => 'Message marked as read', 'data' => $message]);
     }
+
+    public function getUnreadMessages()
+    {
+        $user = Auth::user();
+
+        // Get all unread messages where the authenticated user is the receiver
+        $unreadMessages = Message::where('receiver_id', $user->id)
+                                 ->where('unread', true)
+                                 ->with(['sender'])
+                                 ->get();
+
+        $unreadMessages = $unreadMessages->map(function ($message) {
+            return [
+                'id' => $message->id,
+                'content' => $message->content,
+                'sender_id' => $message->sender_id,
+                'receiver_id' => $message->receiver_id,
+                'created_at' => $message->created_at,
+                'read' => $message->read,
+                'unread' => $message->unread,
+                'sender' => [
+                    'id' => $message->sender->id,
+                    'name' => $message->sender->name,
+                    'email' => $message->sender->email,
+                ],
+            ];
+        });
+
+        return response()->json(['unread_messages' => $unreadMessages->values()->all()]);
+    }
 }

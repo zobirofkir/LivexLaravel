@@ -23,4 +23,9 @@ Route::middleware('auth:api')->prefix("auth/chats")->group(function () {
      */
     Route::post('/messages/{messageId}/read', [MessageController::class, 'markAsRead'])->name('messages.markAsRead');
     Route::get('/messages/{messageId}/read', [MessageController::class, 'markAsRead'])->name('messages.readStatus');
+
+    /**
+     * Route to get all unread messages for the authenticated user
+     */
+    Route::get('/messages/unread', [MessageController::class, 'getUnreadMessages'])->name('messages.unread');
 });
