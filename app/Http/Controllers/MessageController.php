@@ -52,39 +52,37 @@ class MessageController extends Controller
             $query->where('sender_id', $userId)
                   ->where('receiver_id', $user->id);
         })->with(['sender', 'receiver'])
-          ->get()
-          ->map(function ($message) use ($user) {
-              // Always return the other participant's info
-              if ($message->sender_id === $user->id) {
-                  $otherParticipant = $message->receiver;
-              } else {
-                  $otherParticipant = $message->sender;
-              }
+          ->get();
 
-              return [
-                  'id' => $message->id,
-                  'content' => $message->content,
-                  'sender_id' => $message->sender_id,
-                  'receiver_id' => $message->receiver_id,
-                  'created_at' => $message->created_at,
-                  'read' => $message->read,
-                  'unread' => $message->unread,
-                  'user' => [
-                      'id' => $otherParticipant->id,
-                      'name' => $otherParticipant->name,
-                      'email' => $otherParticipant->email,
-                      // Add any other fields you need from the user model
-                  ],
-              ];
-          });
-
-        // Count unread messages
         $unreadCount = $messages->where('unread', true)->count();
 
-        return response()->json([
-            'messages' => $messages->values()->all(),
-            'unread_count' => $unreadCount,
-        ]);
+        $messages = $messages->map(function ($message) use ($user, $unreadCount) {
+            // Always return the other participant's info
+            if ($message->sender_id === $user->id) {
+                $otherParticipant = $message->receiver;
+            } else {
+                $otherParticipant = $message->sender;
+            }
+
+            return [
+                'id' => $message->id,
+                'content' => $message->content,
+                'sender_id' => $message->sender_id,
+                'receiver_id' => $message->receiver_id,
+                'created_at' => $message->created_at,
+                'read' => $message->read,
+                'unread' => $message->unread,
+                'unread_count' => $unreadCount,
+                'user' => [
+                    'id' => $otherParticipant->id,
+                    'name' => $otherParticipant->name,
+                    'email' => $otherParticipant->email,
+                    // Add any other fields you need from the user model
+                ],
+            ];
+        });
+
+        return response()->json(['messages' => $messages->values()->all(), 'unread_count' => $unreadCount]);
     }
 
     /**
