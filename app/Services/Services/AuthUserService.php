@@ -47,7 +47,7 @@ class AuthUserService implements AuthUserConstructor
     public function show(): UserResource
     {
         $auth = Auth::user();
-        return UserResource::make($auth->load(['profile', 'videos']));
+        return UserResource::make($auth->load(['profile', 'videos', 'liveStreams']));
     }
 
     /**
