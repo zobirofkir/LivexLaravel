@@ -4,6 +4,7 @@ namespace App\Services\Services;
 
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\LiveStreamResource;
 use App\Services\Constructors\AuthUserConstructor;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -65,5 +66,14 @@ class AuthUserService implements AuthUserConstructor
     {
         $user = Auth::user();
         return $user->videos; // Assuming 'videos' is the relationship name in the User model
+    }
+
+    /**
+     * List all live streams created by the authenticated user.
+     */
+    public function listUserLiveStreams()
+    {
+        $liveStreams = Auth::user()->liveStreams;
+        return LiveStreamResource::collection($liveStreams);
     }
 }

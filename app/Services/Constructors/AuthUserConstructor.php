@@ -25,4 +25,9 @@ interface AuthUserConstructor
      * @return bool
      */
     public function logout(): bool;
+
+    /**
+     * List all live streams created by the authenticated user.
+     */
+    public function listUserLiveStreams();
 }

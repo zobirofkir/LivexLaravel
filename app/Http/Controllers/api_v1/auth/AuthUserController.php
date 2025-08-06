@@ -41,4 +41,12 @@ class AuthUserController extends Controller
         return AuthUserFacade::logout();
     }
 
+    /**
+     * List live streams created by the authenticated user.
+     */
+    public function liveStreams()
+    {
+        return AuthUserFacade::listUserLiveStreams();
+    }
+
 }
