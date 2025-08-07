@@ -19,13 +19,14 @@ class UserResource extends JsonResource
             'phone_number' => $this->phone_number,
             'profile_image' => asset('storage/' . $this->profile_image),
             'is_live' => $this->is_live,
+            'bio' => $this->bio,
 
             'followers_count' => $this->followers()->count(),
             'following_count' => $this->following()->count(),
             'total_likes' => $this->totalLikes()->count(),
             'total_earnings' => $this->totalEarnings(),
             'comments_count' => $this->comments()->count(),
-            'videos' => VideoResource::collection($this->videos), // Use VideoResource for videos
+            'videos' => VideoResource::collection($this->videos),
             'live_streams' => LiveStreamResource::collection($this->whenLoaded('liveStreams')),
 
             'created_at' => $this->created_at,
