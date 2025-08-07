@@ -30,12 +30,17 @@ class AuthUserService implements AuthUserConstructor
             unset($validatedData['profile_image']);
         }
     
-        $user->update($validatedData);
+        // Separate user fields from profile fields
+        $userFields = array_intersect_key($validatedData, array_flip(['name', 'email', 'phone_number', 'profile_image']));
+        $profileFields = array_intersect_key($validatedData, array_flip(['first_name', 'last_name', 'bio', 'phone', 'address']));
+    
+        $user->update($userFields);
     
         if ($user->profile) {
-            $user->profile->update($validatedData);
+            $user->profile->update($profileFields);
         } else {
-            $user->profile()->create($validatedData);
+            $profileFields['user_id'] = $user->id;
+            $user->profile()->create($profileFields);
         }
     
         return UserResource::make($user->load(['profile', 'videos']));
