@@ -17,15 +17,27 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'phone_number' => $this->phone_number,
-            'profile_image' => asset('storage/' . $this->profile_image),
+            'profile_image' => $this->profile_image ? asset('storage/' . $this->profile_image) : null,
             'is_live' => $this->is_live,
-            'bio' => $this->bio,
+            
+            // Profile fields
+            'first_name' => $this->profile?->first_name,
+            'last_name' => $this->profile?->last_name,
+            'bio' => $this->profile?->bio,
+            'phone' => $this->profile?->phone,
+            'address' => $this->profile?->address,
 
-            'followers_count' => $this->followers()->count(),
-            'following_count' => $this->following()->count(),
+            'followers_count' => $this->whenLoaded('followers', function() {
+                return $this->followers->count();
+            }, $this->followers()->count()),
+            'following_count' => $this->whenLoaded('following', function() {
+                return $this->following->count();
+            }, $this->following()->count()),
             'total_likes' => $this->totalLikes()->count(),
             'total_earnings' => $this->totalEarnings(),
-            'comments_count' => $this->comments()->count(),
+            'comments_count' => $this->whenLoaded('comments', function() {
+                return $this->comments->count();
+            }, $this->comments()->count()),
             'videos' => VideoResource::collection($this->videos),
             'live_streams' => LiveStreamResource::collection($this->whenLoaded('liveStreams')),
 
