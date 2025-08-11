@@ -21,6 +21,7 @@ class OfferResource extends JsonResource
             'description' => $this->description,
             'image' => $this->image,
             'price' => $this->price,
+            'price_sale' => $this->price_sale,
             'valid_until' => $this->valid_until,
             'is_active' => $this->is_active,
             'additional_info' => $this->additional_info,
