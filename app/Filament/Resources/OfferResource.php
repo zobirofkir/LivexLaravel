@@ -75,9 +75,17 @@ class OfferResource extends Resource
                 Section::make('Pricing & Availability')
                     ->schema([
                         TextInput::make('price')
+                            ->label('Original Price')
                             ->numeric()
                             ->prefix('$')
                             ->maxValue(999999.99),
+                            
+                        TextInput::make('price_sale')
+                            ->label('Sale Price')
+                            ->numeric()
+                            ->prefix('$')
+                            ->maxValue(999999.99)
+                            ->helperText('Leave empty if no discount'),
                             
                         DatePicker::make('valid_until')
                             ->label('Valid Until')
@@ -88,7 +96,7 @@ class OfferResource extends Resource
                             ->default(true)
                             ->onIcon('heroicon-m-check')
                             ->offIcon('heroicon-m-x-mark'),
-                    ])->columns(3),
+                    ])->columns(4),
                     
                 Section::make('Additional Information')
                     ->schema([
@@ -125,7 +133,14 @@ class OfferResource extends Resource
                     ->sortable(),
                     
                 TextColumn::make('price')
-                    ->money('USD')
+                    ->label('Price')
+                    ->formatStateUsing(function ($record) {
+                        if ($record->price_sale) {
+                            return '<span style="text-decoration: line-through; color: #6b7280;">$' . number_format($record->price, 2) . '</span> <span style="color: #dc2626; font-weight: bold;">$' . number_format($record->price_sale, 2) . '</span>';
+                        }
+                        return '$' . number_format($record->price, 2);
+                    })
+                    ->html()
                     ->sortable(),
                     
                 IconColumn::make('is_active')

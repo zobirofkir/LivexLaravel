@@ -16,6 +16,7 @@ class Offer extends Model
         'image',
         'description',
         'price',
+        'price_sale',
         'is_active',
         'valid_until',
         'additional_info',
@@ -26,6 +27,7 @@ class Offer extends Model
         'valid_until' => 'date',
         'additional_info' => 'array',
         'price' => 'decimal:2',
+        'price_sale' => 'decimal:2',
     ];
     
     /**
