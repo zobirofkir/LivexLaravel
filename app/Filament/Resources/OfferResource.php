@@ -14,6 +14,7 @@ use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -91,13 +92,12 @@ class OfferResource extends Resource
                     
                 Section::make('Additional Information')
                     ->schema([
-                        KeyValue::make('additional_info')
-                            ->keyLabel('Property')
-                            ->valueLabel('Value')
-                            ->reorderable()
+                        Textarea::make('additional_info')
+                            ->label('Additional Information')
+                            ->placeholder('Enter any additional information about this offer...')
+                            ->rows(4)
                             ->columnSpanFull(),
                     ]),
-
                 Hidden::make('user_id')->default(Auth::user()->id)
             ]);
     }
