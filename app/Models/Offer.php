@@ -17,6 +17,8 @@ class Offer extends Model
         'description',
         'price',
         'price_sale',
+        'discount_type',
+        'discount_percentage',
         'is_active',
         'valid_until',
         'additional_info',
@@ -28,6 +30,7 @@ class Offer extends Model
         'additional_info' => 'array',
         'price' => 'decimal:2',
         'price_sale' => 'decimal:2',
+        'discount_percentage' => 'decimal:2',
     ];
     
     /**

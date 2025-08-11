@@ -17,6 +17,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
@@ -78,14 +79,34 @@ class OfferResource extends Resource
                             ->label('Original Price')
                             ->numeric()
                             ->prefix('$')
-                            ->maxValue(999999.99),
+                            ->maxValue(999999.99)
+                            ->required(),
+                            
+                        Select::make('discount_type')
+                            ->label('Discount Type')
+                            ->options([
+                                'fixed' => 'Fixed Price',
+                                'percentage' => 'Percentage Discount',
+                            ])
+                            ->default('fixed')
+                            ->live(),
                             
                         TextInput::make('price_sale')
                             ->label('Sale Price')
                             ->numeric()
                             ->prefix('$')
                             ->maxValue(999999.99)
-                            ->helperText('Leave empty if no discount'),
+                            ->visible(fn (Get $get) => $get('discount_type') === 'fixed')
+                            ->helperText('Enter the discounted price'),
+                            
+                        TextInput::make('discount_percentage')
+                            ->label('Discount Percentage')
+                            ->numeric()
+                            ->suffix('%')
+                            ->minValue(0)
+                            ->maxValue(100)
+                            ->visible(fn (Get $get) => $get('discount_type') === 'percentage')
+                            ->helperText('Enter discount percentage (0-100)'),
                             
                         DatePicker::make('valid_until')
                             ->label('Valid Until')
@@ -96,7 +117,7 @@ class OfferResource extends Resource
                             ->default(true)
                             ->onIcon('heroicon-m-check')
                             ->offIcon('heroicon-m-x-mark'),
-                    ])->columns(4),
+                    ])->columns(3),
                     
                 Section::make('Additional Information')
                     ->schema([
@@ -132,13 +153,31 @@ class OfferResource extends Resource
                     ->searchable()
                     ->sortable(),
                     
+                TextColumn::make('discount_type')
+                    ->label('Discount')
+                    ->formatStateUsing(function ($record) {
+                        if ($record->discount_type === 'percentage' && $record->discount_percentage) {
+                            return $record->discount_percentage . '% off';
+                        } elseif ($record->discount_type === 'fixed' && $record->price_sale) {
+                            return 'Fixed price';
+                        }
+                        return 'No discount';
+                    })
+                    ->toggleable(),
+                    
                 TextColumn::make('price')
                     ->label('Price')
                     ->formatStateUsing(function ($record) {
-                        if ($record->price_sale) {
-                            return '<span style="text-decoration: line-through; color: #6b7280;">$' . number_format($record->price, 2) . '</span> <span style="color: #dc2626; font-weight: bold;">$' . number_format($record->price_sale, 2) . '</span>';
+                        $originalPrice = '$' . number_format($record->price, 2);
+                        
+                        if ($record->discount_type === 'percentage' && $record->discount_percentage) {
+                            $discountedPrice = $record->price * (1 - $record->discount_percentage / 100);
+                            return '<span style="text-decoration: line-through; color: #6b7280;">' . $originalPrice . '</span> <span style="color: #dc2626; font-weight: bold;">$' . number_format($discountedPrice, 2) . '</span> <span style="color: #059669; font-size: 0.875rem;">(' . $record->discount_percentage . '% off)</span>';
+                        } elseif ($record->discount_type === 'fixed' && $record->price_sale) {
+                            return '<span style="text-decoration: line-through; color: #6b7280;">' . $originalPrice . '</span> <span style="color: #dc2626; font-weight: bold;">$' . number_format($record->price_sale, 2) . '</span>';
                         }
-                        return '$' . number_format($record->price, 2);
+                        
+                        return $originalPrice;
                     })
                     ->html()
                     ->sortable(),
