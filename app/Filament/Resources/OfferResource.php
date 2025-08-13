@@ -80,7 +80,16 @@ class OfferResource extends Resource
                             ->numeric()
                             ->prefix('$')
                             ->maxValue(999999.99)
-                            ->required(),
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, Get $get, $state) {
+                                $discountType = $get('discount_type');
+                                $discountPercentage = $get('discount_percentage');
+                                if ($discountType === 'percentage' && $discountPercentage && $state) {
+                                    $discountedPrice = $state * (1 - $discountPercentage / 100);
+                                    $set('price_sale', round($discountedPrice, 2));
+                                }
+                            }),
                             
                         Select::make('discount_type')
                             ->label('Discount Type')
@@ -89,7 +98,19 @@ class OfferResource extends Resource
                                 'percentage' => 'Percentage Discount',
                             ])
                             ->default('fixed')
-                            ->live(),
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, Get $get, $state) {
+                                if ($state === 'percentage') {
+                                    $price = $get('price');
+                                    $discountPercentage = $get('discount_percentage');
+                                    if ($price && $discountPercentage) {
+                                        $discountedPrice = $price * (1 - $discountPercentage / 100);
+                                        $set('price_sale', round($discountedPrice, 2));
+                                    }
+                                } else {
+                                    $set('price_sale', null);
+                                }
+                            }),
                             
                         TextInput::make('price_sale')
                             ->label('Sale Price')
@@ -106,7 +127,15 @@ class OfferResource extends Resource
                             ->minValue(0)
                             ->maxValue(100)
                             ->visible(fn (Get $get) => $get('discount_type') === 'percentage')
-                            ->helperText('Enter discount percentage (0-100)'),
+                            ->helperText('Enter discount percentage (0-100)')
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, Get $get, $state) {
+                                $price = $get('price');
+                                if ($price && $state) {
+                                    $discountedPrice = $price * (1 - $state / 100);
+                                    $set('price_sale', round($discountedPrice, 2));
+                                }
+                            }),
                             
                         DatePicker::make('valid_until')
                             ->label('Valid Until')
@@ -169,12 +198,17 @@ class OfferResource extends Resource
                     ->label('Price')
                     ->formatStateUsing(function ($record) {
                         $originalPrice = '$' . number_format($record->price, 2);
+                        $discountedPrice = $record->getDiscountedPrice();
                         
-                        if ($record->discount_type === 'percentage' && $record->discount_percentage) {
-                            $discountedPrice = $record->price * (1 - $record->discount_percentage / 100);
-                            return '<span style="text-decoration: line-through; color: #6b7280;">' . $originalPrice . '</span> <span style="color: #dc2626; font-weight: bold;">$' . number_format($discountedPrice, 2) . '</span> <span style="color: #059669; font-size: 0.875rem;">(' . $record->discount_percentage . '% off)</span>';
-                        } elseif ($record->discount_type === 'fixed' && $record->price_sale) {
-                            return '<span style="text-decoration: line-through; color: #6b7280;">' . $originalPrice . '</span> <span style="color: #dc2626; font-weight: bold;">$' . number_format($record->price_sale, 2) . '</span>';
+                        if ($discountedPrice < $record->price) {
+                            $html = '<span style="text-decoration: line-through; color: #6b7280;">' . $originalPrice . '</span> ';
+                            $html .= '<span style="color: #dc2626; font-weight: bold;">$' . number_format($discountedPrice, 2) . '</span>';
+                            
+                            if ($record->discount_type === 'percentage' && $record->discount_percentage) {
+                                $html .= ' <span style="color: #059669; font-size: 0.875rem;">(' . $record->discount_percentage . '% off)</span>';
+                            }
+                            
+                            return $html;
                         }
                         
                         return $originalPrice;

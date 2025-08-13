@@ -60,4 +60,26 @@ class Offer extends Model
     {
         return $this->valid_until && $this->valid_until < now()->toDateString();
     }
+    
+    /**
+     * Get the final discounted price.
+     */
+    public function getDiscountedPrice(): float
+    {
+        if ($this->discount_type === 'percentage' && $this->discount_percentage) {
+            return round($this->price * (1 - $this->discount_percentage / 100), 2);
+        } elseif ($this->discount_type === 'fixed' && $this->price_sale) {
+            return $this->price_sale;
+        }
+        
+        return $this->price;
+    }
+    
+    /**
+     * Get the discount amount.
+     */
+    public function getDiscountAmount(): float
+    {
+        return round($this->price - $this->getDiscountedPrice(), 2);
+    }
 }
