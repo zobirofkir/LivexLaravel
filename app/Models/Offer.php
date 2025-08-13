@@ -52,4 +52,12 @@ class Offer extends Model
                                ->orWhere('valid_until', '>=', now()->toDateString());
                      });
     }
+    
+    /**
+     * Check if the offer is expired.
+     */
+    public function isExpired(): bool
+    {
+        return $this->valid_until && $this->valid_until < now()->toDateString();
+    }
 }

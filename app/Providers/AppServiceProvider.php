@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
 use App\Services\Services\FollowerService;
+use App\Console\Commands\ExpireOffers;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +28,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ExpireOffers::class,
+            ]);
+        }
     }
 }
