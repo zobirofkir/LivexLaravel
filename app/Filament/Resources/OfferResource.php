@@ -137,6 +137,19 @@ class OfferResource extends Resource
                                 }
                             }),
                             
+                        Forms\Components\Placeholder::make('calculated_price')
+                            ->label('Discounted Price')
+                            ->content(function (Get $get) {
+                                $price = $get('price');
+                                $percentage = $get('discount_percentage');
+                                if ($price && $percentage) {
+                                    $discounted = $price * (1 - $percentage / 100);
+                                    return '$' . number_format($discounted, 2);
+                                }
+                                return 'Enter price and percentage to see result';
+                            })
+                            ->visible(fn (Get $get) => $get('discount_type') === 'percentage'),
+                            
                         DatePicker::make('valid_until')
                             ->label('Valid Until')
                             ->minDate(now()),
