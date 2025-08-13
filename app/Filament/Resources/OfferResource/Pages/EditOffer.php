@@ -10,10 +10,16 @@ class EditOffer extends EditRecord
 {
     protected static string $resource = OfferResource::class;
 
-    protected function getHeaderActions(): array
+    protected function getFormActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            $this->getSaveFormAction(),
+            $this->getCancelFormAction(),
+            Actions\DeleteAction::make()
+                ->requiresConfirmation()
+                ->modalHeading('Delete Offer')
+                ->modalDescription('Are you sure you want to delete this offer? This action cannot be undone.')
+                ->modalSubmitActionLabel('Yes, delete it'),
         ];
     }
 }
