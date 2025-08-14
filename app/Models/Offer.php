@@ -34,6 +34,21 @@ class Offer extends Model
     ];
     
     /**
+     * Boot the model and add event listeners.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::saving(function ($offer) {
+            // Automatically calculate price_sale for percentage discounts
+            if ($offer->discount_type === 'percentage' && $offer->discount_percentage && $offer->price) {
+                $offer->price_sale = round($offer->price * (1 - $offer->discount_percentage / 100), 2);
+            }
+        });
+    }
+    
+    /**
      * Get the user that owns the offer.
      */
     public function user(): BelongsTo
@@ -66,13 +81,12 @@ class Offer extends Model
      */
     public function getDiscountedPrice(): float
     {
-        if ($this->discount_type === 'percentage' && $this->discount_percentage) {
-            return round($this->price * (1 - $this->discount_percentage / 100), 2);
-        } elseif ($this->discount_type === 'fixed' && $this->price_sale) {
-            return $this->price_sale;
+        // Always return price_sale if it exists, regardless of discount type
+        if ($this->price_sale) {
+            return (float) $this->price_sale;
         }
         
-        return $this->price;
+        return (float) $this->price;
     }
     
     /**

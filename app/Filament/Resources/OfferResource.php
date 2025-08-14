@@ -108,6 +108,7 @@ class OfferResource extends Resource
                                         $set('price_sale', round($discountedPrice, 2));
                                     }
                                 } else {
+                                    // For fixed type, clear the calculated price_sale so user can enter manually
                                     $set('price_sale', null);
                                 }
                             }),
@@ -118,7 +119,8 @@ class OfferResource extends Resource
                             ->prefix('$')
                             ->maxValue(999999.99)
                             ->visible(fn (Get $get) => $get('discount_type') === 'fixed')
-                            ->helperText('Enter the discounted price'),
+                            ->helperText('Enter the discounted price')
+                            ->required(fn (Get $get) => $get('discount_type') === 'fixed'),
                             
                         TextInput::make('discount_percentage')
                             ->label('Discount Percentage')
@@ -128,6 +130,7 @@ class OfferResource extends Resource
                             ->maxValue(100)
                             ->visible(fn (Get $get) => $get('discount_type') === 'percentage')
                             ->helperText('Enter discount percentage (0-100)')
+                            ->required(fn (Get $get) => $get('discount_type') === 'percentage')
                             ->live()
                             ->afterStateUpdated(function (Set $set, Get $get, $state) {
                                 $price = $get('price');
@@ -136,6 +139,11 @@ class OfferResource extends Resource
                                     $set('price_sale', round($discountedPrice, 2));
                                 }
                             }),
+                            
+                        // Hidden field to ensure price_sale is always stored
+                        Hidden::make('price_sale')
+                            ->visible(fn (Get $get) => $get('discount_type') === 'percentage')
+                            ->dehydrated(),
                             
                         Forms\Components\Placeholder::make('calculated_price')
                             ->label('Discounted Price')
@@ -149,16 +157,6 @@ class OfferResource extends Resource
                                 return 'Enter price and percentage to see result';
                             })
                             ->visible(fn (Get $get) => $get('discount_type') === 'percentage'),
-                            
-                        DatePicker::make('valid_until')
-                            ->label('Valid Until')
-                            ->minDate(now()),
-                            
-                        Toggle::make('is_active')
-                            ->label('Active')
-                            ->default(true)
-                            ->onIcon('heroicon-m-check')
-                            ->offIcon('heroicon-m-x-mark'),
                     ])->columns(3),
                     
                 Section::make('Additional Information')
