@@ -26,6 +26,7 @@ class OfferResource extends JsonResource
             'valid_until' => $this->valid_until,
             'is_active' => $this->is_active,
             'additional_info' => $this->additional_info,
+            'force_refresh_at' => $this->force_refresh_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'user' => $this->whenLoaded('user', function() {

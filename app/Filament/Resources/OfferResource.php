@@ -31,6 +31,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Filament\Notifications\Notification;
 
 class OfferResource extends Resource
 {
@@ -216,7 +217,7 @@ class OfferResource extends Resource
                     ->label('Discount')
                     ->formatStateUsing(function ($record) {
                         if ($record->discount_type === 'percentage' && $record->discount_percentage) {
-                            return $record->discount_type . '% off';
+                            return $record->discount_percentage . '% off';
                         } elseif ($record->discount_type === 'fixed' && $record->price_sale) {
                             return 'Fixed price';
                         }
@@ -250,6 +251,13 @@ class OfferResource extends Resource
                     ->boolean()
                     ->sortable(),
                 
+                TextColumn::make('force_refresh_at')
+                    ->label('Last Refresh')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable()
+                    ->placeholder('Never'),
+                
                 TextColumn::make('valid_until')
                     ->date()
                     ->sortable()
@@ -267,8 +275,6 @@ class OfferResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                // SelectFilter removed to fix isOptionDisabled error
-                
                 TernaryFilter::make('is_active')
                     ->label('Active Status')
                     ->placeholder('All Offers')
@@ -287,6 +293,23 @@ class OfferResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('force_refresh')
+                    ->label('Force Refresh')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('warning')
+                    ->action(function (Offer $record) {
+                        $record->forceRefresh();
+                        
+                        Notification::make()
+                            ->title('Offer Refreshed')
+                            ->body('The offer has been marked for force refresh in frontend applications.')
+                            ->success()
+                            ->send();
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading('Force Refresh Offer')
+                    ->modalDescription('This will update the force refresh timestamp, signaling frontend applications to refresh this offer data.')
+                    ->modalSubmitActionLabel('Yes, Force Refresh'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -299,6 +322,27 @@ class OfferResource extends Resource
                                 $record->update(['is_active' => !$record->is_active]);
                             }
                         }),
+                    Tables\Actions\BulkAction::make('force_refresh_bulk')
+                        ->label('Force Refresh Selected')
+                        ->icon('heroicon-o-arrow-path')
+                        ->color('warning')
+                        ->action(function ($records) {
+                            $count = 0;
+                            foreach ($records as $record) {
+                                $record->forceRefresh();
+                                $count++;
+                            }
+                            
+                            Notification::make()
+                                ->title('Offers Refreshed')
+                                ->body("{$count} offers have been marked for force refresh.")
+                                ->success()
+                                ->send();
+                        })
+                        ->requiresConfirmation()
+                        ->modalHeading('Force Refresh Selected Offers')
+                        ->modalDescription('This will update the force refresh timestamp for all selected offers.')
+                        ->modalSubmitActionLabel('Yes, Force Refresh All'),
                 ]),
             ]);
     }

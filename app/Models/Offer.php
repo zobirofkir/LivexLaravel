@@ -23,6 +23,7 @@ class Offer extends Model
         'is_active',
         'valid_until',
         'additional_info',
+        'force_refresh_at',
     ];
     
     protected $casts = [
@@ -32,6 +33,7 @@ class Offer extends Model
         'price' => 'decimal:2',
         'price_sale' => 'decimal:2',
         'discount_percentage' => 'decimal:2',
+        'force_refresh_at' => 'datetime',
     ];
     
     /**
@@ -109,5 +111,13 @@ class Offer extends Model
     public function getPostedByName(): string
     {
         return $this->posted_by ?: $this->user->name;
+    }
+    
+    /**
+     * Force refresh the offer for frontend applications.
+     */
+    public function forceRefresh(): void
+    {
+        $this->update(['force_refresh_at' => now()]);
     }
 }
