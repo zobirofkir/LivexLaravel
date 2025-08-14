@@ -12,6 +12,7 @@ class Offer extends Model
     
     protected $fillable = [
         'user_id',
+        'posted_by',
         'title',
         'image',
         'description',
@@ -44,6 +45,11 @@ class Offer extends Model
             // Automatically calculate price_sale for percentage discounts
             if ($offer->discount_type === 'percentage' && $offer->discount_percentage && $offer->price) {
                 $offer->price_sale = round($offer->price * (1 - $offer->discount_percentage / 100), 2);
+            }
+            
+            // Set posted_by to user's name if not provided
+            if (!$offer->posted_by && $offer->user) {
+                $offer->posted_by = $offer->user->name;
             }
         });
     }
@@ -95,5 +101,13 @@ class Offer extends Model
     public function getDiscountAmount(): float
     {
         return round($this->price - $this->getDiscountedPrice(), 2);
+    }
+    
+    /**
+     * Get the display name for who posted this offer.
+     */
+    public function getPostedByName(): string
+    {
+        return $this->posted_by ?: $this->user->name;
     }
 }

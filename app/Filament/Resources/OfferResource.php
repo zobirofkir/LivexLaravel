@@ -48,17 +48,23 @@ class OfferResource extends Resource
             ->schema([
                 Section::make('Offer Details')
                     ->schema([
-                TextInput::make('user_id')
-                    ->label('Creator')
-                    ->default(fn () => Auth::id())
-                    ->required()
-                    ->hidden()
-                    ->dehydrated(),
-                            
-                    TextInput::make('title')
-                        ->required()
-                        ->maxLength(255),
-                            
+                        TextInput::make('user_id')
+                            ->label('Creator')
+                            ->default(fn () => Auth::id())
+                            ->required()
+                            ->hidden()
+                            ->dehydrated(),
+                        
+                        TextInput::make('posted_by')
+                            ->label('Posted By')
+                            ->placeholder('Enter custom name or leave empty to use your name')
+                            ->helperText('This will be displayed as the creator name instead of your username')
+                            ->maxLength(255),
+                        
+                        TextInput::make('title')
+                            ->required()
+                            ->maxLength(255),
+                        
                         FileUpload::make('image')
                             ->image()
                             ->directory('offers')
@@ -67,12 +73,12 @@ class OfferResource extends Resource
                             ->imageCropAspectRatio('16:9')
                             ->imageResizeTargetWidth('1200')
                             ->imageResizeTargetHeight('675'),
-                            
+                        
                         RichEditor::make('description')
                             ->required()
                             ->columnSpanFull(),
                     ])->columns(1),
-                    
+                
                 Section::make('Pricing & Availability')
                     ->schema([
                         TextInput::make('price')
@@ -157,6 +163,16 @@ class OfferResource extends Resource
                                 return 'Enter price and percentage to see result';
                             })
                             ->visible(fn (Get $get) => $get('discount_type') === 'percentage'),
+                            
+                        DatePicker::make('valid_until')
+                            ->label('Valid Until')
+                            ->minDate(now()),
+                            
+                        Toggle::make('is_active')
+                            ->label('Active')
+                            ->default(true)
+                            ->onIcon('heroicon-m-check')
+                            ->offIcon('heroicon-m-x-mark'),
                     ])->columns(3),
                     
                 Section::make('Additional Information')
@@ -178,33 +194,36 @@ class OfferResource extends Resource
                 TextColumn::make('id')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                    
+                
                 ImageColumn::make('image')
                     ->circular()
                     ->defaultImageUrl(fn () => asset('images/placeholder.jpg'))
                     ->toggleable(),
-                    
+                
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable(),
-                    
-                TextColumn::make('user.name')
-                    ->label('Creator')
-                    ->searchable()
+                
+                TextColumn::make('posted_by')
+                    ->label('Posted By')
+                    ->formatStateUsing(function ($record) {
+                        return $record->getPostedByName();
+                    })
+                    ->searchable(['posted_by', 'user.name'])
                     ->sortable(),
-                    
+                
                 TextColumn::make('discount_type')
                     ->label('Discount')
                     ->formatStateUsing(function ($record) {
                         if ($record->discount_type === 'percentage' && $record->discount_percentage) {
-                            return $record->discount_percentage . '% off';
+                            return $record->discount_type . '% off';
                         } elseif ($record->discount_type === 'fixed' && $record->price_sale) {
                             return 'Fixed price';
                         }
                         return 'No discount';
                     })
                     ->toggleable(),
-                    
+                
                 TextColumn::make('price')
                     ->label('Price')
                     ->formatStateUsing(function ($record) {
@@ -226,21 +245,21 @@ class OfferResource extends Resource
                     })
                     ->html()
                     ->sortable(),
-                    
+                
                 IconColumn::make('is_active')
                     ->boolean()
                     ->sortable(),
-                    
+                
                 TextColumn::make('valid_until')
                     ->date()
                     ->sortable()
                     ->toggleable(),
-                    
+                
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                    
+                
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
@@ -249,13 +268,13 @@ class OfferResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->filters([
                 // SelectFilter removed to fix isOptionDisabled error
-                    
+                
                 TernaryFilter::make('is_active')
                     ->label('Active Status')
                     ->placeholder('All Offers')
                     ->trueLabel('Active Offers')
                     ->falseLabel('Inactive Offers'),
-                    
+                
                 Tables\Filters\Filter::make('valid_offers')
                     ->label('Valid Offers')
                     ->query(fn (Builder $query) => $query->where(function ($query) {
