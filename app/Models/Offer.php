@@ -21,20 +21,24 @@ class Offer extends Model
         'discount_type',
         'discount_percentage',
         'is_active',
+        'enabled',
         'valid_until',
+        'view_offer_text',
         'additional_info',
         'force_refresh_at',
-        'view_offer_text',
+        'status_changed_at',
     ];
     
     protected $casts = [
         'is_active' => 'boolean',
+        'enabled' => 'boolean',
         'valid_until' => 'date',
-        'additional_info' => 'array',
         'price' => 'decimal:2',
         'price_sale' => 'decimal:2',
         'discount_percentage' => 'decimal:2',
+        'additional_info' => 'array',
         'force_refresh_at' => 'datetime',
+        'status_changed_at' => 'datetime',
     ];
     
     /**
@@ -54,6 +58,12 @@ class Offer extends Model
             if (!$offer->posted_by && $offer->user) {
                 $offer->posted_by = $offer->user->name;
             }
+            
+            // Track when enabled status changes
+            if ($offer->isDirty('enabled')) {
+                $offer->status_changed_at = now();
+                $offer->force_refresh_at = now();
+            }
         });
     }
     
@@ -71,10 +81,19 @@ class Offer extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true)
+                     ->where('enabled', true)
                      ->where(function ($query) {
                          $query->whereNull('valid_until')
                                ->orWhere('valid_until', '>=', now()->toDateString());
                      });
+    }
+    
+    /**
+     * Scope a query to only include enabled offers.
+     */
+    public function scopeEnabled($query)
+    {
+        return $query->where('enabled', true);
     }
     
     /**
@@ -83,6 +102,14 @@ class Offer extends Model
     public function isExpired(): bool
     {
         return $this->valid_until && $this->valid_until < now()->toDateString();
+    }
+    
+    /**
+     * Check if the offer is available (active, enabled, and not expired).
+     */
+    public function isAvailable(): bool
+    {
+        return $this->is_active && $this->enabled && !$this->isExpired();
     }
     
     /**
@@ -120,5 +147,29 @@ class Offer extends Model
     public function forceRefresh(): void
     {
         $this->update(['force_refresh_at' => now()]);
+    }
+    
+    /**
+     * Enable the offer.
+     */
+    public function enable(): void
+    {
+        $this->update([
+            'enabled' => true,
+            'status_changed_at' => now(),
+            'force_refresh_at' => now()
+        ]);
+    }
+    
+    /**
+     * Disable the offer.
+     */
+    public function disable(): void
+    {
+        $this->update([
+            'enabled' => false,
+            'status_changed_at' => now(),
+            'force_refresh_at' => now()
+        ]);
     }
 }
