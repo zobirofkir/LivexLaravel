@@ -41,7 +41,7 @@ class UserResource extends JsonResource
             }, $this->comments()->count()),
             'received_messages_count' => $this->receivedMessagesCount(),
             'unread_received_messages_count' => $this->getUnreadMessagesCountAsReceiver(),
-            'unread_messages_by_sender' => $this->unreadMessagesBySenderEmail(),
+            'unread_messages_by_receiver' => $this->unreadMessagesByReceiverEmail(),
             'videos' => VideoResource::collection($this->videos),
             'live_streams' => LiveStreamResource::collection($this->whenLoaded('liveStreams')),
 
