@@ -39,6 +39,7 @@ class UserResource extends JsonResource
             'comments_count' => $this->whenLoaded('comments', function() {
                 return $this->comments->count();
             }, $this->comments()->count()),
+            'unread_messages_count' => $this->unreadReceivedMessagesCount(),
             'videos' => VideoResource::collection($this->videos),
             'live_streams' => LiveStreamResource::collection($this->whenLoaded('liveStreams')),
 

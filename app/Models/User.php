@@ -204,4 +204,12 @@ class User extends Authenticatable
         
         return $value;
     }
+
+    /**
+     * Get the count of unread received messages
+     */
+    public function unreadReceivedMessagesCount()
+    {
+        return $this->receivedMessages()->where('unread', true)->count();
+    }
 }
