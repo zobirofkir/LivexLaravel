@@ -161,24 +161,26 @@ class AuthEmailService
     protected function getOrCreateUser($email, $password = null)
     {
         $user = User::where('email', $email)->first();
-    
+
         if (!$user) {
             $password = $password ? trim($password) : Str::random(10);
             $hashedPassword = Hash::make($password);
-    
+
             $sourcePath = public_path('assets/images/profile_image.png');
             $fileName = Str::uuid() . '.png';
             $storagePath = 'profile_images/' . $fileName;
-    
+
             Storage::disk('public')->put($storagePath, file_get_contents($sourcePath));
-    
+
             $user = User::create([
                 'email' => $email,
                 'password' => $hashedPassword,
                 'profile_image' => $storagePath,
+                'name' => null, // Will auto-generate animal name
+                'username' => null, // Will auto-generate animal username
             ]);
         }
-    
+
         return $user;
     }
 

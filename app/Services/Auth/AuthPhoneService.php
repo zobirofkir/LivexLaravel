@@ -61,39 +61,40 @@ class AuthPhoneService
         $phone = $request->phone_number;
         $otp = $request->otp;
         $storedOTP = Cache::get('otp_' . $phone);
-    
+
         if (!$storedOTP || $storedOTP != $otp) {
             return [
                 'message' => 'Invalid OTP',
                 'status' => 422
             ];
         }
-    
+
         Cache::forget('otp_' . $phone);
-    
+
         $password = 'user' . rand(10000, 99999);
-    
+
         $user = User::updateOrCreate(
             ['phone_number' => $phone],
             [
                 'password' => Hash::make($password),
-                'name' => 'User_' . Str::random(5),
+                'name' => null, // Will auto-generate animal name
+                'username' => null, // Will auto-generate animal username
                 'email' => $phone . '@phone.com'
             ]
         );
-    
+
         $sid    = env('TWILIO_SID');
         $token  = env('TWILIO_TOKEN');
         $from   = env('TWILIO_FROM');
-    
+
         $twilio = new Client($sid, $token);
-    
+
         try {
             $twilio->messages->create(
                 $phone,
                 [
                     'from' => $from,
-                    'body' => "Your password is: {$password}"
+                    'body' => "Welcome {$user->name}! Your username is: {$user->username} and password is: {$password}"
                 ]
             );
         } catch (\Exception $e) {
@@ -102,8 +103,11 @@ class AuthPhoneService
                 'status' => 500
             ];
         }
-    
-        return ['password' => $password];
+
+        return [
+            'password' => $password,
+            'user' => $user
+        ];
     }
 
     /**
@@ -128,4 +132,4 @@ class AuthPhoneService
             'access_token' => $user->generateToken(),
         ];
     }
-} 
+}
