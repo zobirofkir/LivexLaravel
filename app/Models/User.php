@@ -239,4 +239,22 @@ class User extends Authenticatable
             })
             ->values();
     }
+
+    /**
+     * Get unread messages count for a specific receiver user by ID
+     */
+    public static function getUnreadMessagesCountByReceiverId($receiverId)
+    {
+        return Message::where('receiver_id', $receiverId)
+            ->where('unread', true)
+            ->count();
+    }
+
+    /**
+     * Get unread messages count for this user as receiver
+     */
+    public function getUnreadMessagesCountAsReceiver()
+    {
+        return $this->receivedMessages()->where('unread', true)->count();
+    }
 }
