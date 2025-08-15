@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('offers', function (Blueprint $table) {
-            $table->enum('discount_type', ['fixed', 'percentage'])->default('fixed')->after('price_sale');
+            $table->enum('discount_type', ['fixed', 'percentage' , 'none'])->default('fixed')->after('price_sale');
             $table->decimal('discount_percentage', 5, 2)->nullable()->after('discount_type');
         });
     }

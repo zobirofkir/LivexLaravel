@@ -100,7 +100,9 @@ class OfferResource extends Resource
                             
                         Select::make('discount_type')
                             ->label('Discount Type')
+                            ->required()
                             ->options([
+                                'none' => 'No Discount',
                                 'fixed' => 'Fixed Price',
                                 'percentage' => 'Percentage Discount',
                             ])
