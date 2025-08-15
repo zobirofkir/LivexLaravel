@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use App\Services\AnimalNameService;
 use App\Traits\HasAnimalNames;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
@@ -42,80 +42,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * The "booted" method of the model.
-     */
-    protected static function booted(): void
-    {
-        static::creating(function (User $user) {
-            if (empty($user->name)) {
-                $user->name = self::generateUniqueAnimalName();
-            }
-            if (empty($user->username)) {
-                $user->username = self::generateUniqueAnimalUsername();
-            }
-        });
-
-        static::updating(function (User $user) {
-            if (empty($user->name)) {
-                $user->name = self::generateUniqueAnimalName();
-            }
-            if (empty($user->username)) {
-                $user->username = self::generateUniqueAnimalUsername();
-            }
-        });
-    }
-
-    /**
-     * Generate a unique animal name for display
-     */
-    protected static function generateUniqueAnimalName(): string
-    {
-        $animals = [
-            'Lion', 'Tiger', 'Elephant', 'Giraffe', 'Zebra', 'Panda', 'Koala', 
-            'Dolphin', 'Whale', 'Eagle', 'Falcon', 'Owl', 'Penguin', 'Flamingo',
-            'Butterfly', 'Dragonfly', 'Octopus', 'Seahorse', 'Turtle', 'Rabbit',
-            'Fox', 'Wolf', 'Bear', 'Deer', 'Moose', 'Kangaroo', 'Cheetah', 
-            'Leopard', 'Jaguar', 'Lynx', 'Otter', 'Seal', 'Walrus', 'Hippo',
-            'Rhino', 'Crocodile', 'Iguana', 'Chameleon', 'Gecko', 'Parrot',
-            'Shark', 'Stingray', 'Jellyfish', 'Starfish', 'Lobster', 'Crab',
-            'Peacock', 'Swan', 'Hummingbird', 'Woodpecker', 'Toucan', 'Pelican'
-        ];
-
-        do {
-            $randomAnimal = $animals[array_rand($animals)];
-            $uniqueNumber = rand(1000, 9999);
-            $name = $randomAnimal . ' ' . $uniqueNumber;
-        } while (self::where('name', $name)->exists());
-
-        return $name;
-    }
-
-    /**
-     * Generate a unique animal username (lowercase, no spaces)
-     */
-    protected static function generateUniqueAnimalUsername(): string
-    {
-        $animals = [
-            'lion', 'tiger', 'elephant', 'giraffe', 'zebra', 'panda', 'koala', 
-            'dolphin', 'whale', 'eagle', 'falcon', 'owl', 'penguin', 'flamingo',
-            'butterfly', 'dragonfly', 'octopus', 'seahorse', 'turtle', 'rabbit',
-            'fox', 'wolf', 'bear', 'deer', 'moose', 'kangaroo', 'cheetah', 
-            'leopard', 'jaguar', 'lynx', 'otter', 'seal', 'walrus', 'hippo',
-            'rhino', 'crocodile', 'iguana', 'chameleon', 'gecko', 'parrot',
-            'shark', 'stingray', 'jellyfish', 'starfish', 'lobster', 'crab',
-            'peacock', 'swan', 'hummingbird', 'woodpecker', 'toucan', 'pelican'
-        ];
-
-        do {
-            $randomAnimal = $animals[array_rand($animals)];
-            $uniqueNumber = rand(1000, 9999);
-            $username = $randomAnimal . '_' . $uniqueNumber;
-        } while (self::where('username', $username)->exists());
-
-        return $username;
-    }
-
-    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -129,7 +55,7 @@ class User extends Authenticatable
     }
 
     /**
-     * The attributes that should be appended to the model's array form.
+     * Generate access token for API authentication
      */
     public function generateToken()
     {
@@ -137,61 +63,72 @@ class User extends Authenticatable
     }
 
     /**
-     * The attributes that should be appended to the model's array form.
-     * 
-     * @return HasOne
+     * Get the user's profile
      */
-    public function profile() : HasOne
+    public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
     }
 
     /**
-     * The attributes that should be appended to the model's array form.
-     * 
-     * @return HasMany
+     * Get the user's videos
      */
-    public function videos()
+    public function videos(): HasMany
     {
         return $this->hasMany(Video::class);
     }
 
     /**
-     * Create Raltion SHeep
+     * Get the user's live stream
      */
     public function live(): HasOne
     {
         return $this->hasOne(Live::class);
     }
 
-    public function liveStreams()
+    /**
+     * Get the user's live streams
+     */
+    public function liveStreams(): HasMany
     {
         return $this->hasMany(LiveStream::class);
     }
     
     /**
-     * Get the offers created by the user.
+     * Get the offers created by the user
      */
     public function offers(): HasMany
     {
         return $this->hasMany(Offer::class);
     }
 
+    /**
+     * Get the user's followers
+     */
     public function followers()
     {
         return $this->belongsToMany(User::class, 'followers', 'following_id', 'follower_id')->withTimestamps();
     }
 
+    /**
+     * Get users that this user is following
+     */
     public function following()
     {
         return $this->belongsToMany(User::class, 'followers', 'follower_id', 'following_id')->withTimestamps();
     }
 
+    /**
+     * Check if this user is following another user
+     */
     public function isFollowing(User $user): bool
     {
         return $this->following()->where('following_id', $user->id)->exists();
     }
 
+    /**
+     * Follow another user
+     */
     public function follow(User $user): void
     {
         if (!$this->isFollowing($user)) {
@@ -199,58 +136,48 @@ class User extends Authenticatable
         }
     }
 
-    public function likes()
+    /**
+     * Get the user's likes
+     */
+    public function likes(): HasMany
     {
         return $this->hasMany(Like::class);
     }
 
-    public function earnings()
+    /**
+     * Get the user's earnings
+     */
+    public function earnings(): HasMany
     {
         return $this->hasMany(Earning::class);
     }
 
+    /**
+     * Get total likes through videos
+     */
     public function totalLikes()
     {
         return $this->hasManyThrough(Like::class, Video::class);
     }
 
+    /**
+     * Get total earnings amount
+     */
     public function totalEarnings()
     {
         return $this->earnings()->sum('amount');
     }
 
-    public function comments()
+    /**
+     * Get the user's comments
+     */
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
     /**
-     * Add this accessor to the User model
-     */
-    public function getNameAttribute($value)
-    {
-        if (!$value) {
-            // Generate a random animal name if name is empty
-            $animals = [
-                'Lion', 'Tiger', 'Elephant', 'Giraffe', 'Zebra', 'Panda', 'Koala', 
-                'Dolphin', 'Whale', 'Eagle', 'Falcon', 'Owl', 'Penguin', 'Flamingo',
-                'Butterfly', 'Dragonfly', 'Octopus', 'Seahorse', 'Turtle', 'Rabbit',
-                'Fox', 'Wolf', 'Bear', 'Deer', 'Moose', 'Kangaroo', 'Cheetah', 
-                'Leopard', 'Jaguar', 'Lynx', 'Otter', 'Seal', 'Walrus', 'Hippo',
-                'Rhino', 'Crocodile', 'Iguana', 'Chameleon', 'Gecko', 'Parrot'
-            ];
-            
-            $randomAnimal = $animals[array_rand($animals)];
-            $uniqueNumber = $this->id ?? rand(1000, 9999);
-            
-            return $randomAnimal . ' ' . $uniqueNumber;
-        }
-        
-        return $value;
-    }
-
-    /**
-     * Get the messages sent by the user.
+     * Get the messages sent by the user
      */
     public function sentMessages(): HasMany
     {
@@ -258,11 +185,23 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the messages received by the user.
+     * Get the messages received by the user
      */
     public function receivedMessages(): HasMany
     {
         return $this->hasMany(Message::class, 'receiver_id');
     }
 
+    /**
+     * Name accessor - generates fallback name if empty
+     */
+    public function getNameAttribute($value)
+    {
+        if (!$value) {
+            $animalNameService = app(AnimalNameService::class);
+            return $animalNameService->generateFallbackName($this->id);
+        }
+        
+        return $value;
+    }
 }
