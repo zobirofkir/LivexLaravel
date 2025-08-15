@@ -29,6 +29,7 @@ class OfferResource extends JsonResource
             'force_refresh_at' => $this->force_refresh_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'view_offer_text' => $this->view_offer_text ?? 'View Offer',
             'user' => $this->whenLoaded('user', function() {
                 return [
                     'id' => $this->user->id,

@@ -171,6 +171,14 @@ class OfferResource extends Resource
                             ->label('Valid Until')
                             ->minDate(now()),
                             
+                        TextInput::make('view_offer_text')
+                            ->label('View Offer Button Text')
+                            ->placeholder('View Offer')
+                            ->default('View Offer')
+                            ->maxLength(50)
+                            ->helperText('Customize the text that appears on the offer button (e.g., "Shop Now", "Get Deal", "Learn More")')
+                            ->columnSpan(1),
+                            
                         Toggle::make('is_active')
                             ->label('Active')
                             ->default(true)
@@ -264,6 +272,12 @@ class OfferResource extends Resource
                     ->date()
                     ->sortable()
                     ->toggleable(),
+                    
+                TextColumn::make('view_offer_text')
+                    ->label('Button Text')
+                    ->sortable()
+                    ->toggleable()
+                    ->default('View Offer'),
                 
                 TextColumn::make('created_at')
                     ->dateTime()

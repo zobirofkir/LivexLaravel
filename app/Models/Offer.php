@@ -24,6 +24,7 @@ class Offer extends Model
         'valid_until',
         'additional_info',
         'force_refresh_at',
+        'view_offer_text',
     ];
     
     protected $casts = [
