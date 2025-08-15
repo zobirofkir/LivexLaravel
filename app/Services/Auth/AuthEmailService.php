@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Models\User;
+use App\Services\AnimalNameService;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
@@ -18,6 +19,13 @@ use Illuminate\Support\Facades\Storage;
 
 class AuthEmailService
 {
+    protected AnimalNameService $animalNameService;
+
+    public function __construct(AnimalNameService $animalNameService)
+    {
+        $this->animalNameService = $animalNameService;
+    }
+
     /**
      * Create New User
      */
@@ -149,12 +157,17 @@ class AuthEmailService
             abort(401);
         }
 
+        // Check if name is null or empty and generate animal name
+        if (is_null($user->getRawOriginal('name')) || empty(trim($user->getRawOriginal('name')))) {
+            $user->name = $this->animalNameService->generateUniqueName();
+            $user->save();
+        }
+
         return [
             'user' => $user
         ];
     }
-
-
+    
     /**
      * Get Or Create Data For Example If the profile_image is empty i create new default profile image
      */
