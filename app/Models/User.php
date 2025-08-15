@@ -212,4 +212,12 @@ class User extends Authenticatable
     {
         return $this->receivedMessages()->where('unread', true)->count();
     }
+
+    /**
+     * Get the count of all received messages
+     */
+    public function receivedMessagesCount()
+    {
+        return $this->receivedMessages()->count();
+    }
 }
