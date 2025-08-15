@@ -21,19 +21,19 @@ class AuthEmailService
     /**
      * Create New User
      */
-    public function createUser($email, $password, $name)
+    public function createUser($email, $password, $name = null)
     {
         $hashedPassword = Hash::make(trim($password));
         
         $user = User::create([
-            'name' => $name,
+            'name' => $name, 
             'email' => $email,
             'password' => $hashedPassword,
         ]);
 
         Log::info('User created', [
             'email' => $email,
-            'name' => $name,
+            'name' => $user->name,
             'raw_password' => $password,
             'hashed_password' => $hashedPassword
         ]);
@@ -207,4 +207,4 @@ class AuthEmailService
             $message->to($email)->subject('Your Account Password');
         });
     }
-} 
+}

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasAnimalNames;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -13,7 +14,7 @@ use Laravel\Passport\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens, HasAnimalNames;
 
     /**
      * The attributes that are mass assignable.
@@ -38,6 +39,49 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if (empty($user->name)) {
+                $user->name = self::generateUniqueAnimalName();
+            }
+        });
+
+        static::updating(function (User $user) {
+            if (empty($user->name)) {
+                $user->name = self::generateUniqueAnimalName();
+            }
+        });
+    }
+
+    /**
+     * Generate a unique animal name
+     */
+    protected static function generateUniqueAnimalName(): string
+    {
+        $animals = [
+            'Lion', 'Tiger', 'Elephant', 'Giraffe', 'Zebra', 'Panda', 'Koala', 
+            'Dolphin', 'Whale', 'Eagle', 'Falcon', 'Owl', 'Penguin', 'Flamingo',
+            'Butterfly', 'Dragonfly', 'Octopus', 'Seahorse', 'Turtle', 'Rabbit',
+            'Fox', 'Wolf', 'Bear', 'Deer', 'Moose', 'Kangaroo', 'Cheetah', 
+            'Leopard', 'Jaguar', 'Lynx', 'Otter', 'Seal', 'Walrus', 'Hippo',
+            'Rhino', 'Crocodile', 'Iguana', 'Chameleon', 'Gecko', 'Parrot',
+            'Shark', 'Stingray', 'Jellyfish', 'Starfish', 'Lobster', 'Crab',
+            'Peacock', 'Swan', 'Hummingbird', 'Woodpecker', 'Toucan', 'Pelican'
+        ];
+
+        do {
+            $randomAnimal = $animals[array_rand($animals)];
+            $uniqueNumber = rand(1000, 9999);
+            $name = $randomAnimal . ' ' . $uniqueNumber;
+        } while (self::where('name', $name)->exists());
+
+        return $name;
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -153,7 +197,24 @@ class User extends Authenticatable
      */
     public function getNameAttribute($value)
     {
-        return $value ?: "User #{$this->id}";
+        if (!$value) {
+            // Generate a random animal name if name is empty
+            $animals = [
+                'Lion', 'Tiger', 'Elephant', 'Giraffe', 'Zebra', 'Panda', 'Koala', 
+                'Dolphin', 'Whale', 'Eagle', 'Falcon', 'Owl', 'Penguin', 'Flamingo',
+                'Butterfly', 'Dragonfly', 'Octopus', 'Seahorse', 'Turtle', 'Rabbit',
+                'Fox', 'Wolf', 'Bear', 'Deer', 'Moose', 'Kangaroo', 'Cheetah', 
+                'Leopard', 'Jaguar', 'Lynx', 'Otter', 'Seal', 'Walrus', 'Hippo',
+                'Rhino', 'Crocodile', 'Iguana', 'Chameleon', 'Gecko', 'Parrot'
+            ];
+            
+            $randomAnimal = $animals[array_rand($animals)];
+            $uniqueNumber = $this->id ?? rand(1000, 9999);
+            
+            return $randomAnimal . ' ' . $uniqueNumber;
+        }
+        
+        return $value;
     }
 
     /**
