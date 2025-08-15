@@ -220,4 +220,23 @@ class User extends Authenticatable
     {
         return $this->receivedMessages()->count();
     }
+
+    /**
+     * Get unread messages count grouped by sender email
+     */
+    public function unreadMessagesBySenderEmail()
+    {
+        return $this->receivedMessages()
+            ->where('unread', true)
+            ->with('sender:id,email')
+            ->get()
+            ->groupBy('sender.email')
+            ->map(function ($messages) {
+                return [
+                    'sender_email' => $messages->first()->sender->email,
+                    'unread_count' => $messages->count()
+                ];
+            })
+            ->values();
+    }
 }
