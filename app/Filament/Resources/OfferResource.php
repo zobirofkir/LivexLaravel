@@ -190,16 +190,16 @@ class OfferResource extends Resource
                             ->offIcon('heroicon-m-x-mark')
                             ->helperText('Controls if the offer is active in the system'),
                             
-                        // Toggle::make('enabled')
-                        //     ->label('Enabled')
-                        //     ->default(true)
-                        //     ->onIcon('heroicon-m-check')
-                        //     ->offIcon('heroicon-m-x-mark')
-                        //     ->helperText('Admin control to enable/disable offer visibility in the app')
-                        //     ->live()
-                        //     ->afterStateUpdated(function (Set $set, $state) {
-                        //         $set('force_refresh_at', now());
-                        //     }),
+                        Toggle::make('enabled')
+                            ->label('Enabled')
+                            ->default(true)
+                            ->onIcon('heroicon-m-check')
+                            ->offIcon('heroicon-m-x-mark')
+                            ->helperText('Admin control to enable/disable offer visibility in the app')
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, $state) {
+                                $set('force_refresh_at', now());
+                            }),
                     ])->columns(3),
                     
                 Section::make('Additional Information')
