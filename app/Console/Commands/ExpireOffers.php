@@ -13,7 +13,7 @@ class ExpireOffers extends Command
     public function handle()
     {
         $expiredCount = Offer::where('is_active', true)
-            ->where('valid_until', '<', now()->toDateString())
+            ->where('valid_until', '<', now()) // Changed from now()->toDateString()
             ->update(['is_active' => false]);
 
         $this->info("Deactivated {$expiredCount} expired offers.");

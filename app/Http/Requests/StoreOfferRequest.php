@@ -26,9 +26,9 @@ class StoreOfferRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'nullable|image|max:5120', // 5MB max
+            'image' => 'nullable|image|max:5120',
             'price' => 'nullable|numeric|min:0',
-            'valid_until' => 'nullable|date|after:today',
+            'valid_until' => 'nullable|date|after:now', // Changed from 'after:today' to 'after:now'
             'additional_info' => 'nullable|array',
         ];
     }

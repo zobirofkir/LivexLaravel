@@ -8,6 +8,7 @@ use App\Models\Offer;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
@@ -167,9 +168,12 @@ class OfferResource extends Resource
                             })
                             ->visible(fn (Get $get) => $get('discount_type') === 'percentage'),
                             
-                        DatePicker::make('valid_until')
+                        DateTimePicker::make('valid_until')
                             ->label('Valid Until')
-                            ->minDate(now()),
+                            ->minDate(now())
+                            ->seconds(true)
+                            ->displayFormat('Y-m-d H:i:s')
+                            ->helperText('Set the exact date and time when this offer expires'),
                             
                         TextInput::make('view_offer_text')
                             ->label('View Offer Button Text')
@@ -290,7 +294,8 @@ class OfferResource extends Resource
                     ->placeholder('Never'),
                 
                 TextColumn::make('valid_until')
-                    ->date()
+                    ->label('Valid Until')
+                    ->dateTime('Y-m-d H:i:s')
                     ->sortable()
                     ->toggleable(),
                     
@@ -322,7 +327,7 @@ class OfferResource extends Resource
                     ->label('Valid Offers')
                     ->query(fn (Builder $query) => $query->where(function ($query) {
                         $query->whereNull('valid_until')
-                              ->orWhere('valid_until', '>=', now()->toDateString());
+                              ->orWhere('valid_until', '>=', now());
                     }))
                     ->toggle(),
             ])

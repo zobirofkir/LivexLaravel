@@ -32,7 +32,7 @@ class Offer extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'enabled' => 'boolean',
-        'valid_until' => 'date',
+        'valid_until' => 'datetime', // Changed from 'date' to 'datetime'
         'price' => 'decimal:2',
         'price_sale' => 'decimal:2',
         'discount_percentage' => 'decimal:2',
@@ -84,7 +84,7 @@ class Offer extends Model
                      ->where('enabled', true)
                      ->where(function ($query) {
                          $query->whereNull('valid_until')
-                               ->orWhere('valid_until', '>=', now()->toDateString());
+                               ->orWhere('valid_until', '>=', now()); // Changed from now()->toDateString()
                      });
     }
     
@@ -101,7 +101,7 @@ class Offer extends Model
      */
     public function isExpired(): bool
     {
-        return $this->valid_until && $this->valid_until < now()->toDateString();
+        return $this->valid_until && $this->valid_until < now(); // Changed from now()->toDateString()
     }
     
     /**
