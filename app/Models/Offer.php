@@ -27,6 +27,7 @@ class Offer extends Model
         'additional_info',
         'force_refresh_at',
         'status_changed_at',
+        'activation_type'
     ];
     
     protected $casts = [

@@ -18,6 +18,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -168,12 +169,42 @@ class OfferResource extends Resource
                             })
                             ->visible(fn (Get $get) => $get('discount_type') === 'percentage'),
                             
+                        Toggle::make('is_active')
+                            ->label('Active')
+                            ->default(true)
+                            ->onIcon('heroicon-m-check')
+                            ->offIcon('heroicon-m-x-mark')
+                            ->helperText('Controls if the offer is active in the system')
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, Get $get, $state) {
+                                if (!$state) {
+                                    $set('activation_type', null);
+                                    $set('valid_until', null);
+                                }
+                            }),
+
+                        Radio::make('activation_type')
+                            ->label('Activation Type')
+                            ->options([
+                                'always' => 'Always display the offer',
+                                'timed' => 'Valid until specific date',
+                            ])
+                            ->default('always')
+                            ->visible(fn (Get $get) => $get('is_active'))
+                            ->reactive()
+                            ->afterStateUpdated(function (Set $set, $state) {
+                                if ($state === 'always') {
+                                    $set('valid_until', null);
+                                }
+                            }),
+
                         DateTimePicker::make('valid_until')
                             ->label('Valid Until')
-                            ->minDate(now())
-                            ->seconds(true)
-                            ->displayFormat('Y-m-d H:i:s')
-                            ->helperText('Set the exact date and time when this offer expires'),
+                            ->seconds(false)
+                            ->displayFormat('Y-m-d H:i')
+                            ->helperText('Set the exact date and time when this offer expires')
+                            ->visible(fn (Get $get) => $get('is_active') && $get('activation_type') === 'timed')
+                            ->required(fn (Get $get) => $get('activation_type') === 'timed'),
                             
                         TextInput::make('view_offer_text')
                             ->label('View Offer Button Text')
@@ -182,25 +213,7 @@ class OfferResource extends Resource
                             ->maxLength(50)
                             ->helperText('Customize the text that appears on the offer button (e.g., "Shop Now", "Get Deal", "Learn More")')
                             ->columnSpan(1),
-                            
-                        Toggle::make('is_active')
-                            ->label('Active')
-                            ->default(true)
-                            ->onIcon('heroicon-m-check')
-                            ->offIcon('heroicon-m-x-mark')
-                            ->helperText('Controls if the offer is active in the system'),
-                            
-                        Toggle::make('enabled')
-                            ->label('Enabled')
-                            ->default(true)
-                            ->onIcon('heroicon-m-check')
-                            ->offIcon('heroicon-m-x-mark')
-                            ->helperText('Admin control to enable/disable offer visibility in the app')
-                            ->live()
-                            ->afterStateUpdated(function (Set $set, $state) {
-                                $set('force_refresh_at', now());
-                            }),
-                    ])->columns(3),
+                    ])->columns(1),
                     
                 Section::make('Additional Information')
                     ->schema([
@@ -278,6 +291,16 @@ class OfferResource extends Resource
                     ->boolean()
                     ->sortable(),
                 
+                TextColumn::make('activation_type')
+                    ->label('Activation Type')
+                    ->formatStateUsing(fn ($state) => $state === 'always' ? 'Always Active' : 'Timed')
+                    ->sortable(),
+
+                TextColumn::make('valid_until')
+                    ->label('Valid Until')
+                    ->dateTime('Y-m-d H:i:s')
+                    ->sortable()
+                    ->placeholder('Always Active'),
                 
                 TextColumn::make('status_changed_at')
                     ->label('Status Changed')
@@ -293,12 +316,6 @@ class OfferResource extends Resource
                     ->toggleable()
                     ->placeholder('Never'),
                 
-                TextColumn::make('valid_until')
-                    ->label('Valid Until')
-                    ->dateTime('Y-m-d H:i:s')
-                    ->sortable()
-                    ->toggleable(),
-                    
                 TextColumn::make('view_offer_text')
                     ->label('Button Text')
                     ->sortable()
