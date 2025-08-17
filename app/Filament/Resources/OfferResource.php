@@ -169,18 +169,15 @@ class OfferResource extends Resource
                             })
                             ->visible(fn (Get $get) => $get('discount_type') === 'percentage'),
                             
-                        Toggle::make('is_active')
+                        Toggle::make('enabled')
                             ->label('Active')
                             ->default(true)
                             ->onIcon('heroicon-m-check')
                             ->offIcon('heroicon-m-x-mark')
-                            ->helperText('Controls if the offer is active in the system')
+                            ->helperText('Admin control to enable/disable offer visibility in the app')
                             ->live()
-                            ->afterStateUpdated(function (Set $set, Get $get, $state) {
-                                if (!$state) {
-                                    $set('activation_type', null);
-                                    $set('valid_until', null);
-                                }
+                            ->afterStateUpdated(function (Set $set, $state) {
+                                $set('force_refresh_at', now());
                             }),
 
                         Radio::make('activation_type')
