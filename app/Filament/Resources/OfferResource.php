@@ -286,6 +286,7 @@ class OfferResource extends Resource
                 IconColumn::make('is_active')
                     ->label('Active')
                     ->boolean()
+                    ->getStateUsing(fn ($record) => $record->isCurrentlyActive())
                     ->sortable(),
                 
                 TextColumn::make('activation_type')

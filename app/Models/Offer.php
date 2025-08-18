@@ -173,4 +173,17 @@ class Offer extends Model
             'force_refresh_at' => now()
         ]);
     }
+
+    public function isCurrentlyActive()
+    {
+        if (!$this->is_active) {
+            return false;
+        }
+
+        if ($this->activation_type === 'always') {
+            return true;
+        }
+
+        return $this->valid_until === null || $this->valid_until >= now();
+    }
 }
