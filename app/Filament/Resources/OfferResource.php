@@ -174,7 +174,7 @@ class OfferResource extends Resource
                             ->default(true)
                             ->onIcon('heroicon-m-check')
                             ->offIcon('heroicon-m-x-mark')
-                            ->helperText('Admin control to enable/disable offer visibility in the app')
+                            ->helperText('Admin control to enablile/disable offer visibility in the app')
                             ->live()
                             ->afterStateUpdated(function (Set $set, $state) {
                                 $set('force_refresh_at', now());

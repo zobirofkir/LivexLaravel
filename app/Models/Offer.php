@@ -102,7 +102,7 @@ class Offer extends Model
      */
     public function isExpired(): bool
     {
-        return $this->valid_until && $this->valid_until < now(); // Changed from now()->toDateString()
+        return $this->valid_until && $this->valid_until < now();
     }
     
     /**
