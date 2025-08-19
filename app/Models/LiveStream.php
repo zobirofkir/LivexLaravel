@@ -16,6 +16,15 @@ class LiveStream extends Model
         'live_category' => LiveCategoryEnum::class,
     ];
 
+    protected static function booted()
+    {
+        static::saved(function ($liveStream) {
+            if ($liveStream->is_live === false) {
+                $liveStream->delete();
+            }
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
