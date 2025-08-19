@@ -41,7 +41,7 @@ class OfferResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-gift';
     
-    protected static ?string $navigationGroup = 'Content Management';
+    protected static ?string $navigationGroup = 'Offers';
     
     protected static ?int $navigationSort = 3;
 
