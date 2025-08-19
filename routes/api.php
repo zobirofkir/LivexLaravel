@@ -8,39 +8,39 @@ use App\Http\Controllers\Api\LikeController;
 /**
  * authenticated routes
  */
-require __DIR__.'/auth/authenticated/authenticated.php';
+require __DIR__.'/api_v1/authenticated/authenticated.php';
 
 /**
  * live Routes
  */
-require __DIR__.'/auth/live/live.php';
+require __DIR__.'/api_v1/live/live.php';
 
 /**
  * mail routes
  */
-require __DIR__.'/auth/mail/mail.php';
+require __DIR__.'/api_v1/mail/mail.php';
 
 /**
  * phone routes
  */
-require __DIR__.'/auth/phone/phone.php';
+require __DIR__.'/api_v1/phone/phone.php';
 
 /**
  * offers routes
  */
-require __DIR__.'/auth/offers/offers.php';
+require __DIR__.'/api_v1/offers/offers.php';
 
 /**
  * Profile Actions routes
  */
-require __DIR__.'/auth/profile-actions/profile-actions.php';
+require __DIR__.'/api_v1/profile-actions/profile-actions.php';
 
 /**
  * User routes
  */
-require __DIR__.'/auth/users/users.php';
+require __DIR__.'/api_v1/users/users.php';
 
 /**
  * Chats routes
  */
-require __DIR__.'/auth/chats/chats.php';
+require __DIR__.'/api_v1/chats/chats.php';
