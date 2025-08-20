@@ -102,9 +102,9 @@ class OfferTimerResource extends Resource
                     ->boolean()
                     ->label('Active'),
                     
-                Tables\Columns\IconColumn::make('enabled')
-                    ->boolean()
-                    ->label('Enabled'),
+                // Tables\Columns\IconColumn::make('enabled')
+                //     ->boolean()
+                //     ->label('Enabled'),
                     
                 Tables\Columns\TextColumn::make('price')
                     ->money('USD')
