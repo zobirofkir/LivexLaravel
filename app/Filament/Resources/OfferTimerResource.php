@@ -8,6 +8,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -98,9 +99,11 @@ class OfferTimerResource extends Resource
                     ->dateTime()
                     ->sortable(),
                     
-                Tables\Columns\IconColumn::make('is_active')
+                IconColumn::make('is_active')
+                    ->label('Active')
                     ->boolean()
-                    ->label('Active'),
+                    ->getStateUsing(fn ($record) => $record->isCurrentlyActive())
+                    ->sortable(),
                     
                 // Tables\Columns\IconColumn::make('enabled')
                 //     ->boolean()
