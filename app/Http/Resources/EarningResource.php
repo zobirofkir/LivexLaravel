@@ -18,6 +18,7 @@ class EarningResource extends JsonResource
             'id' => $this->id,
             'amount' => $this->amount,
             'source' => $this->source,
+            'platform_fee_percentage' => $this->platform_fee_percentage,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
