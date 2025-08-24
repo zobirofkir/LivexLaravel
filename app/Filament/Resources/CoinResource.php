@@ -62,6 +62,12 @@ class CoinResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('duplicate')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->action(function (Coin $record) {
+                        $record->replicate()->save();
+                    })
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
