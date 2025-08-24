@@ -6,12 +6,16 @@ use App\Filament\Resources\CoinResource\Pages;
 use App\Filament\Resources\CoinResource\RelationManagers;
 use App\Models\Coin;
 use Filament\Forms;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class CoinResource extends Resource
 {
@@ -27,7 +31,8 @@ class CoinResource extends Resource
     {
         return $form
             ->schema([
-                //
+                TextColumn::make('price'),
+                TextColumn::make('old_price'),
             ]);
     }
 
@@ -35,7 +40,9 @@ class CoinResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextInput::make('price'),
+                TextInput::make('old_price'),
+                Hidden::make('user_id')->default(Auth::id()),
             ])
             ->filters([
                 //
