@@ -44,3 +44,8 @@ require __DIR__.'/api_v1/users/users.php';
  * Chats routes
  */
 require __DIR__.'/api_v1/chats/chats.php';
+
+/**
+ * Coins routes
+ */
+require __DIR__.'/api_v1/coins/coins.php';
