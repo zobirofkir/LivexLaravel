@@ -31,18 +31,20 @@ class CoinResource extends Resource
     {
         return $form
             ->schema([
-                TextColumn::make('price'),
-                TextColumn::make('old_price'),
-            ]);
+                TextInput::make('price'),
+                TextInput::make('old_price'),
+                Hidden::make('user_id')->default(Auth::id()),
+
+            ])
+            ->columns(1);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextInput::make('price'),
-                TextInput::make('old_price'),
-                Hidden::make('user_id')->default(Auth::id()),
+                TextColumn::make('price'),
+                TextColumn::make('old_price'),
             ])
             ->filters([
                 //
