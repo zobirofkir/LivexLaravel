@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TextInput as NumericInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -38,6 +39,8 @@ class CoinResource extends Resource
                 TextInput::make('old_price')
                     ->numeric()
                     ->integer(),
+                Toggle::make('is_best_offer')
+                    ->label('Best Offer'),
                 Hidden::make('user_id')->default(Auth::id()),
 
             ])
@@ -50,6 +53,9 @@ class CoinResource extends Resource
             ->columns([
                 TextColumn::make('price'),
                 TextColumn::make('old_price'),
+                Tables\Columns\IconColumn::make('is_best_offer')
+                    ->boolean()
+                    ->label('Best Offer'),
             ])
             ->filters([
                 //

@@ -11,6 +11,7 @@ class Coin extends Model
         "user_id",
         "price",
         "old_price",
+        "is_best_offer",
     ];
 
     /**
