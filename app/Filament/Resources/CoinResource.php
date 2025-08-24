@@ -8,6 +8,7 @@ use App\Models\Coin;
 use Filament\Forms;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TextInput as NumericInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -31,8 +32,12 @@ class CoinResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('price'),
-                TextInput::make('old_price'),
+                TextInput::make('price')
+                    ->numeric()
+                    ->integer(),
+                TextInput::make('old_price')
+                    ->numeric()
+                    ->integer(),
                 Hidden::make('user_id')->default(Auth::id()),
 
             ])
