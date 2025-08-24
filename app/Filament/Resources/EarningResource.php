@@ -43,11 +43,20 @@ class EarningResource extends Resource
                 ->columnSpanFull(),
                     
                 Forms\Components\TextInput::make('amount')
-                    ->label('Amount')
+                    ->label('Gross Amount')
                     ->required()
                     ->numeric()
                     ->minValue(0.01)
                     ->prefix('$')
+                    ->columnSpan(1),
+                    
+                Forms\Components\TextInput::make('platform_fee_percentage')
+                    ->label('Platform Fee (%)')
+                    ->numeric()
+                    ->default(20)
+                    ->minValue(0)
+                    ->maxValue(100)
+                    ->suffix('%')
                     ->columnSpan(1),
                     
                 Select::make('source')
@@ -82,9 +91,20 @@ class EarningResource extends Resource
                     ->formatStateUsing(fn ($state, $record) => $state ?? "User #{$record->user_id}"),
                     
                 Tables\Columns\TextColumn::make('amount')
-                    ->label('Amount')
+                    ->label('Gross Amount')
                     ->money('USD')
                     ->sortable(),
+                    
+                Tables\Columns\TextColumn::make('platform_fee_percentage')
+                    ->label('Platform Fee')
+                    ->suffix('%')
+                    ->sortable(),
+                    
+                Tables\Columns\TextColumn::make('net_amount')
+                    ->label('Net Amount')
+                    ->money('USD')
+                    ->getStateUsing(fn ($record) => $record->net_amount)
+                    ->sortable(false),
                     
                 Tables\Columns\BadgeColumn::make('source')
                     ->label('Source')

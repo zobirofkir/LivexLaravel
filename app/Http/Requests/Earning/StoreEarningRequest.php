@@ -24,6 +24,7 @@ class StoreEarningRequest extends FormRequest
         return [
             'amount' => 'required|numeric|min:0',
             'source' => 'required|string',
+            'platform_fee_percentage' => 'nullable|numeric|min:0|max:100',
         ];
     }
 }

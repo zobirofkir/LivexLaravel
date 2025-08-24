@@ -9,7 +9,7 @@ class Earning extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'amount', 'source', 'notes'];
+    protected $fillable = ['user_id', 'amount', 'source', 'notes', 'platform_fee_percentage'];
 
     protected $casts = [
         'amount' => 'float',
@@ -36,5 +36,21 @@ class Earning extends Model
     public function scopeBetweenDates($query, $startDate, $endDate)
     {
         return $query->whereBetween('created_at', [$startDate, $endDate]);
+    }
+    
+    /**
+     * Get the platform fee amount.
+     */
+    public function getPlatformFeeAmountAttribute(): float
+    {
+        return $this->amount * ($this->platform_fee_percentage / 100);
+    }
+    
+    /**
+     * Get the net amount after platform fee.
+     */
+    public function getNetAmountAttribute(): float
+    {
+        return $this->amount - $this->platform_fee_amount;
     }
 }

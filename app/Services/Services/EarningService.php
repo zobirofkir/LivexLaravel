@@ -15,14 +15,16 @@ class EarningService implements EarningConstructor
      * @param float $amount
      * @param string $source
      * @param string|null $notes
+     * @param float $platformFeePercentage
      * @return Earning
      */
-    public function addEarning(User $user, float $amount, string $source, ?string $notes = null): Earning
+    public function addEarning(User $user, float $amount, string $source, ?string $notes = null, float $platformFeePercentage = 20): Earning
     {
         return $user->earnings()->create([
             'amount' => $amount,
             'source' => $source,
             'notes' => $notes,
+            'platform_fee_percentage' => $platformFeePercentage,
         ]);
     }
 

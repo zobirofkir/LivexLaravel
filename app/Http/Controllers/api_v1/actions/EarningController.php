@@ -22,7 +22,8 @@ class EarningController extends Controller
     public function store(StoreEarningRequest $request): EarningResource
     {
         $user = Auth::user();
-        $earning = EarningFacade::addEarning($user, $request->amount, $request->source);
+        $platformFeePercentage = $request->platform_fee_percentage ?? 20;
+        $earning = EarningFacade::addEarning($user, $request->amount, $request->source, $request->notes, $platformFeePercentage);
 
         return EarningResource::make($earning);
     }
