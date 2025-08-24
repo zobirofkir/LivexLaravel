@@ -18,6 +18,7 @@ class CoinResource extends JsonResource
             "id" => $this->id,
             "price" => $this->price,
             "old_price" => $this->old_price,
+            "is_best_offer" => $this->is_best_offer
         ];
     }
 }
