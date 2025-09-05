@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Events\OfferChanged;
+use App\Events\OfferChangedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -51,15 +51,15 @@ class Offer extends Model
         parent::boot();
         
         static::created(function ($offer) {
-            event(new OfferChanged());
+            event(new OfferChangedEvent($offer));
         });
 
         static::updated(function ($offer) {
-            event(new OfferChanged());
+            event(new OfferChangedEvent($offer));
         });
 
         static::deleted(function ($offer) {
-            event(new OfferChanged());
+            event(new OfferChangedEvent($offer));
         });
         
         static::saving(function ($offer) {

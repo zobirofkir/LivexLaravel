@@ -2,6 +2,7 @@
 
 return [
     App\Providers\AppServiceProvider::class,
+    App\Providers\BroadcastServiceProvider::class,
     App\Providers\AuthUserServiceProvider::class,
     App\Providers\CoinServiceProvider::class,
     App\Providers\CommentServiceProvider::class,
