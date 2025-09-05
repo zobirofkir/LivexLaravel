@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\OfferChanged;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,7 +34,7 @@ class Offer extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'enabled' => 'boolean',
-        'valid_until' => 'datetime', // Changed from 'date' to 'datetime'
+        'valid_until' => 'datetime',
         'price' => 'decimal:2',
         'price_sale' => 'decimal:2',
         'discount_percentage' => 'decimal:2',
@@ -48,6 +49,18 @@ class Offer extends Model
     protected static function boot()
     {
         parent::boot();
+        
+        static::created(function ($offer) {
+            event(new OfferChanged());
+        });
+
+        static::updated(function ($offer) {
+            event(new OfferChanged());
+        });
+
+        static::deleted(function ($offer) {
+            event(new OfferChanged());
+        });
         
         static::saving(function ($offer) {
             // Automatically calculate price_sale for percentage discounts

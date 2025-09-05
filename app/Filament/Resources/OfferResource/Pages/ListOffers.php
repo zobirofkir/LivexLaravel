@@ -16,4 +16,9 @@ class ListOffers extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    public function getBroadcastChannel(): ?string
+    {
+        return 'offers';
+    }
 }

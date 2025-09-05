@@ -356,6 +356,8 @@ class OfferResource extends Resource
                     ->color('warning')
                     ->action(function (Offer $record) {
                         $record->forceRefresh();
+
+                        event(new \App\Events\OfferChangedEvent($record));
                         
                         Notification::make()
                             ->title('Offer Refreshed')
