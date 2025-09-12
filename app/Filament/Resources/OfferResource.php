@@ -306,14 +306,7 @@ class OfferResource extends Resource
                     ->sortable()
                     ->toggleable()
                     ->placeholder('Never'),
-                
-                TextColumn::make('force_refresh_at')
-                    ->label('Last Refresh')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable()
-                    ->placeholder('Never'),
-                
+                                
                 TextColumn::make('view_offer_text')
                     ->label('Button Text')
                     ->sortable()

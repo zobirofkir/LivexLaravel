@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\OfferChangedEvent;
+use App\Jobs\ResetForceRefreshFlag;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,7 +27,7 @@ class Offer extends Model
         'valid_until',
         'view_offer_text',
         'additional_info',
-        'force_refresh_at',
+        'force_refresh',
         'status_changed_at',
         'activation_type'
     ];
@@ -39,7 +40,7 @@ class Offer extends Model
         'price_sale' => 'decimal:2',
         'discount_percentage' => 'decimal:2',
         'additional_info' => 'array',
-        'force_refresh_at' => 'datetime',
+        'force_refresh' => 'boolean',
         'status_changed_at' => 'datetime',
     ];
     
@@ -76,7 +77,14 @@ class Offer extends Model
             // Track when enabled status changes
             if ($offer->isDirty('enabled')) {
                 $offer->status_changed_at = now();
-                $offer->force_refresh_at = now();
+                $offer->force_refresh = true;
+            }
+        });
+
+        static::saved(function ($offer) {
+            // If force_refresh was set to true, dispatch a delayed job to reset it.
+            if ($offer->wasChanged('force_refresh') && $offer->force_refresh) {
+                ResetForceRefreshFlag::dispatch($offer)->delay(now()->addSeconds(5));
             }
         });
     }
@@ -160,7 +168,7 @@ class Offer extends Model
      */
     public function forceRefresh(): void
     {
-        $this->update(['force_refresh_at' => now()]);
+        $this->update(['force_refresh' => true]);
     }
     
     /**
@@ -171,7 +179,7 @@ class Offer extends Model
         $this->update([
             'enabled' => true,
             'status_changed_at' => now(),
-            'force_refresh_at' => now()
+            'force_refresh' => true
         ]);
     }
     
@@ -183,7 +191,7 @@ class Offer extends Model
         $this->update([
             'enabled' => false,
             'status_changed_at' => now(),
-            'force_refresh_at' => now()
+            'force_refresh' => true
         ]);
     }
 
