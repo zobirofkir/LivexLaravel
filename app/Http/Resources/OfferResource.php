@@ -29,7 +29,7 @@ class OfferResource extends JsonResource
             'enabled' => $this->enabled,
             'is_available' => $this->isAvailable(),
             'additional_info' => $this->additional_info,
-            'force_refresh_at' => $this->force_refresh_at,
+            'force_refresh' => $this->force_refresh,
             'status_changed_at' => $this->status_changed_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
