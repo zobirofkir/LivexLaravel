@@ -9,6 +9,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class ScheduledOfferStats extends BaseWidget
 {
+    protected static ?string $pollingInterval = '1s';
+    
     protected function getStats(): array
     {
         $totalScheduled = Offer::where('has_pending_updates', true)->count();
@@ -42,9 +44,29 @@ class ScheduledOfferStats extends BaseWidget
                 ->color('warning'),
                 
             Stat::make('Next Update', $nextScheduled ? $nextScheduled->title : 'None')
-                ->description($nextScheduled ? $nextScheduled->scheduled_publish_at->format('M j, H:i') : 'No upcoming updates')
+                ->description($nextScheduled ? $this->getCountdown($nextScheduled->scheduled_publish_at) : 'No upcoming updates')
                 ->descriptionIcon('heroicon-m-arrow-right')
                 ->color('info'),
         ];
+    }
+    
+    private function getCountdown($scheduledTime): string
+    {
+        $now = Carbon::now('Africa/Casablanca');
+        $scheduled = $scheduledTime->setTimezone('Africa/Casablanca');
+        
+        if ($scheduled->isPast()) {
+            return 'Overdue';
+        }
+        
+        $diff = $now->diff($scheduled);
+        
+        if ($diff->days > 0) {
+            return $diff->days . 'd ' . $diff->h . 'h ' . $diff->i . 'm';
+        } elseif ($diff->h > 0) {
+            return $diff->h . 'h ' . $diff->i . 'm';
+        } else {
+            return $diff->i . 'm ' . $diff->s . 's';
+        }
     }
 }
