@@ -415,3 +415,4 @@ class OfferResource extends Resource
         ];
     }
 }
+ 
