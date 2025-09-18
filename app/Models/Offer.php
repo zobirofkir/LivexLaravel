@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Events\OfferChangedEvent;
 use App\Jobs\ResetForceRefreshFlag;
+use App\Jobs\PublishScheduledOfferUpdate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Carbon\Carbon;
 
 class Offer extends Model
 {
@@ -29,7 +31,10 @@ class Offer extends Model
         'additional_info',
         'force_refresh',
         'status_changed_at',
-        'activation_type'
+        'activation_type',
+        'pending_updates',
+        'scheduled_publish_at',
+        'has_pending_updates'
     ];
     
     protected $casts = [
@@ -42,6 +47,9 @@ class Offer extends Model
         'additional_info' => 'array',
         'force_refresh' => 'boolean',
         'status_changed_at' => 'datetime',
+        'pending_updates' => 'array',
+        'scheduled_publish_at' => 'datetime',
+        'has_pending_updates' => 'boolean',
     ];
     
     /**
@@ -206,5 +214,35 @@ class Offer extends Model
         }
 
         return $this->valid_until === null || $this->valid_until >= now();
+    }
+
+    /**
+     * Schedule updates to be published at 2:00 PM Morocco time.
+     */
+    public function scheduleUpdate(array $updates): void
+    {
+        $moroccoTime = Carbon::now('Africa/Casablanca');
+        $publishTime = $moroccoTime->copy()->setTime(14, 0, 0); // 2:00 PM
+        
+        // If it's already past 2 PM today, schedule for tomorrow
+        if ($moroccoTime->hour >= 14) {
+            $publishTime->addDay();
+        }
+
+        $this->update([
+            'pending_updates' => $updates,
+            'scheduled_publish_at' => $publishTime,
+            'has_pending_updates' => true
+        ]);
+
+        PublishScheduledOfferUpdate::dispatch($this)->delay($publishTime);
+    }
+
+    /**
+     * Check if offer has pending updates.
+     */
+    public function hasPendingUpdates(): bool
+    {
+        return $this->has_pending_updates && $this->pending_updates;
     }
 }

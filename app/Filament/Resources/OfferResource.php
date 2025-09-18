@@ -306,6 +306,25 @@ class OfferResource extends Resource
                     ->sortable()
                     ->toggleable()
                     ->placeholder('Never'),
+                
+                TextColumn::make('scheduled_publish_at')
+                    ->label('Scheduled Update')
+                    ->dateTime('Y-m-d H:i')
+                    ->sortable()
+                    ->toggleable()
+                    ->placeholder('No pending updates')
+                    ->formatStateUsing(function ($state, $record) {
+                        if (!$record->has_pending_updates) {
+                            return 'No pending updates';
+                        }
+                        return $state ? $state->format('Y-m-d H:i') . ' (Morocco)' : 'No pending updates';
+                    }),
+                
+                IconColumn::make('has_pending_updates')
+                    ->label('Pending')
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(),
                                 
                 TextColumn::make('view_offer_text')
                     ->label('Button Text')
@@ -338,6 +357,12 @@ class OfferResource extends Resource
                               ->orWhere('valid_until', '>=', now());
                     }))
                     ->toggle(),
+                
+                TernaryFilter::make('has_pending_updates')
+                    ->label('Pending Updates')
+                    ->placeholder('All Offers')
+                    ->trueLabel('Has Pending Updates')
+                    ->falseLabel('No Pending Updates'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -362,6 +387,25 @@ class OfferResource extends Resource
                     ->modalHeading('Force Refresh Offer')
                     ->modalDescription('This will update the force refresh timestamp, signaling frontend applications to refresh this offer data.')
                     ->modalSubmitActionLabel('Yes, Force Refresh'),
+                
+                Tables\Actions\Action::make('publish_now')
+                    ->label('Publish Now')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn (Offer $record) => $record->has_pending_updates)
+                    ->action(function (Offer $record) {
+                        \App\Jobs\PublishScheduledOfferUpdate::dispatchSync($record);
+                        
+                        Notification::make()
+                            ->title('Updates Published')
+                            ->body('The pending updates have been published immediately.')
+                            ->success()
+                            ->send();
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading('Publish Pending Updates')
+                    ->modalDescription('This will immediately publish the pending updates instead of waiting for the scheduled time.')
+                    ->modalSubmitActionLabel('Yes, Publish Now'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
