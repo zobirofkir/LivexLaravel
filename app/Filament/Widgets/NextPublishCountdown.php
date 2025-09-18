@@ -31,7 +31,7 @@ class NextPublishCountdown extends BaseWidget
         
         return [
             Stat::make('Next Auto-Publish', $countdown)
-                ->description('Time until 2:00 PM Morocco time')
+                ->description('Time until 2:00 PM')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')
                 ->extraAttributes([
