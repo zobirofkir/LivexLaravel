@@ -19,7 +19,7 @@ class OfferTimerResource extends Resource
 
     protected static ?string $navigationGroup = 'Offers';
 
-    protected static ?string $navigationLabel = 'Offers T';
+    protected static ?string $navigationLabel = 'Offers Timer';
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
 
