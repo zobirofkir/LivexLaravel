@@ -13,7 +13,7 @@ class NextPublishCountdown extends BaseWidget
 
     protected function getStats(): array
     {
-        $moroccoTime = Carbon::now('Africa/Casablanca');
+        $moroccoTime = Carbon::now(config('app.timezone'));
         $nextPublish = $moroccoTime->copy()->setTime(14, 0, 0);
         
         if ($moroccoTime->hour >= 14) {
