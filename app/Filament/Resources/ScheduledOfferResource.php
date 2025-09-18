@@ -25,6 +25,18 @@ class ScheduledOfferResource extends Resource
     protected static ?string $navigationGroup = 'Offers';
     
     protected static ?int $navigationSort = 4;
+    
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('has_pending_updates', true)->count();
+    }
+    
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+    
+    protected static ?string $pollingInterval = '30s';
 
     public static function getEloquentQuery(): Builder
     {
@@ -62,6 +74,32 @@ class ScheduledOfferResource extends Resource
                     ->formatStateUsing(function ($state) {
                         return $state ? $state->format('Y-m-d H:i') . ' (Morocco)' : 'Not scheduled';
                     }),
+                
+                TextColumn::make('countdown')
+                    ->label('Time Remaining')
+                    ->formatStateUsing(function ($state, $record) {
+                        if (!$record->scheduled_publish_at) return 'Not scheduled';
+                        
+                        $now = \Carbon\Carbon::now('Africa/Casablanca');
+                        $scheduled = $record->scheduled_publish_at->setTimezone('Africa/Casablanca');
+                        
+                        if ($scheduled->isPast()) {
+                            return '<span class="text-red-600 font-semibold">Overdue</span>';
+                        }
+                        
+                        $diff = $now->diff($scheduled);
+                        
+                        if ($diff->days > 0) {
+                            return $diff->days . 'd ' . $diff->h . 'h ' . $diff->i . 'm';
+                        } elseif ($diff->h > 0) {
+                            return $diff->h . 'h ' . $diff->i . 'm';
+                        } else {
+                            return $diff->i . 'm ' . $diff->s . 's';
+                        }
+                    })
+                    ->html()
+                    ->extraAttributes(['class' => 'font-mono'])
+                    ->sortable(false),
                 
                 TextColumn::make('pending_updates')
                     ->label('Pending Changes')
