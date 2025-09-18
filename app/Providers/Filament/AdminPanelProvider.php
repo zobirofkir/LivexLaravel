@@ -8,7 +8,6 @@ use App\Filament\Widgets\UserRegistrationChart;
 use App\Filament\Widgets\LiveStreamChart;
 use App\Filament\Widgets\StreamingActivityChart;
 use App\Filament\Widgets\LiveStreamsTable;
-use App\Filament\Widgets\NextPublishCountdown;
 use App\Filament\Widgets\PopularStreamersTable;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -62,7 +61,6 @@ class AdminPanelProvider extends PanelProvider
                 StreamingActivityChart::class,
                 LiveStreamsTable::class,
                 PopularStreamersTable::class,
-                NextPublishCountdown::class
             ])
             ->middleware([
                 EncryptCookies::class,

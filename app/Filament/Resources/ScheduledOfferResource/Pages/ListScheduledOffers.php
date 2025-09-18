@@ -19,7 +19,7 @@ class ListScheduledOffers extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            \App\Filament\Widgets\NextPublishCountdown::class,
+            ScheduledOfferResource\Widgets\ScheduledOfferStats::class,
         ];
     }
 }

@@ -241,6 +241,13 @@ class ScheduledOfferResource extends Resource
         ];
     }
     
+    public static function getWidgets(): array
+    {
+        return [
+            ScheduledOfferResource\Widgets\ScheduledOfferStats::class,
+        ];
+    }
+    
     public static function canCreate(): bool
     {
         return false;
