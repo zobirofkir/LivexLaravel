@@ -15,6 +15,6 @@ class DeleteOldLiveStreams implements ShouldQueue
 
     public function handle(): void
     {
-        LiveStream::where('created_at', '<=', now()->subSeconds(30))->delete();
+        LiveStream::where('created_at', '<=', now()->subMinutes(30))->delete();
     }
 }
