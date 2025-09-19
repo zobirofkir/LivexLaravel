@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\DeleteOldLiveStreams;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -15,3 +16,8 @@ Artisan::command('inspire', function () {
  * Schedule automatic offer expiration
  */
 Schedule::command('offers:expire')->daily();
+
+/**
+ * Schedule automatic live stream deletion
+ */
+Schedule::job(new DeleteOldLiveStreams)->everyThirtySeconds();
