@@ -1,5 +1,5 @@
 protected function schedule(Schedule $schedule)
 {
     $schedule->command('offers:expire')->everyMinute();
-    $schedule->command('livestreams:clear')->everyMinute();
+    $schedule->command('livestreams:clear')->everyThirtyMinutes();
 }
