@@ -145,27 +145,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user's earnings
-     */
-    public function earnings(): HasMany
-    {
-        return $this->hasMany(Earning::class);
-    }
-
-    /**
      * Get total likes through videos
      */
     public function totalLikes()
     {
         return $this->hasManyThrough(Like::class, Video::class);
-    }
-
-    /**
-     * Get total earnings amount
-     */
-    public function totalEarnings()
-    {
-        return $this->earnings()->sum('amount');
     }
 
     /**
