@@ -6,7 +6,6 @@ return [
     App\Providers\AuthUserServiceProvider::class,
     App\Providers\CoinServiceProvider::class,
     App\Providers\CommentServiceProvider::class,
-    App\Providers\EarningServiceProvider::class,
     App\Providers\EmailAuthServiceProvider::class,
     App\Providers\FilamentComponentServiceProvider::class,
     App\Providers\Filament\AdminPanelProvider::class,
