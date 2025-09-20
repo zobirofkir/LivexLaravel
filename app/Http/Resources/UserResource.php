@@ -35,7 +35,6 @@ class UserResource extends JsonResource
                 return $this->following->count();
             }, $this->following()->count()),
             'total_likes' => $this->totalLikes()->count(),
-            'total_earnings' => $this->totalEarnings(),
             'comments_count' => $this->whenLoaded('comments', function() {
                 return $this->comments->count();
             }, $this->comments()->count()),
