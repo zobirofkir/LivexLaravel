@@ -9,13 +9,16 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Handles message operations including sending, retrieving, and marking messages as read.
+ */
 class MessageController extends Controller
 {
     /**
      * Send a message from the authenticated user to another user.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param MessageRequest $request The validated message request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function sendMessage(MessageRequest $request)
     {
@@ -29,22 +32,22 @@ class MessageController extends Controller
             'unread' => $request->has('unread') ? $request->unread : true,
         ]);
 
-        // Broadcast the message
         broadcast(new MessageSent($message))->toOthers();
 
         return response()->json(['message' => 'Message sent successfully', 'data' => $message], 201);
     }
 
     /**
-     * Get all messages for the authenticated user.
+     * Get all messages between the authenticated user and a specified user.
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request The HTTP request
+     * @param int $userId The ID of the other user in the conversation
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getMessages(Request $request, $userId)
     {
         $user = Auth::user();
 
-        // Get all messages between the authenticated user and the specified user
         $messages = Message::where(function ($query) use ($user, $userId) {
             $query->where('sender_id', $user->id)
                   ->where('receiver_id', $userId);
@@ -57,7 +60,6 @@ class MessageController extends Controller
         $unreadCount = $messages->where('unread', true)->count();
 
         $messages = $messages->map(function ($message) use ($user, $unreadCount) {
-            // Always return the other participant's info
             if ($message->sender_id === $user->id) {
                 $otherParticipant = $message->receiver;
             } else {
@@ -77,7 +79,6 @@ class MessageController extends Controller
                     'id' => $otherParticipant->id,
                     'name' => $otherParticipant->name,
                     'email' => $otherParticipant->email,
-                    // Add any other fields you need from the user model
                 ],
             ];
         });
@@ -87,18 +88,20 @@ class MessageController extends Controller
 
     /**
      * Mark a message as read or get its read/unread status.
+     *
+     * @param Request $request The HTTP request
+     * @param int $messageId The ID of the message
+     * @return \Illuminate\Http\JsonResponse
      */
     public function markAsRead(Request $request, $messageId)
     {
         $message = Message::findOrFail($messageId);
 
-        // Only receiver can mark as read or view status
         if ($message->receiver_id !== Auth::id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
         if ($request->isMethod('get')) {
-            // Return read/unread status
             return response()->json([
                 'id' => $message->id,
                 'read' => $message->read,
@@ -106,7 +109,6 @@ class MessageController extends Controller
             ]);
         }
 
-        // POST: mark as read
         $message->read = true;
         $message->unread = false;
         $message->save();
@@ -114,11 +116,15 @@ class MessageController extends Controller
         return response()->json(['message' => 'Message marked as read', 'data' => $message]);
     }
 
+    /**
+     * Get all unread messages for the authenticated user.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getUnreadMessages()
     {
         $user = Auth::user();
 
-        // Get all unread messages where the authenticated user is the receiver
         $unreadMessages = Message::where('receiver_id', $user->id)
                                  ->where('unread', true)
                                  ->with(['sender'])
