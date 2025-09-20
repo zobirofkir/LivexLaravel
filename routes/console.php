@@ -19,5 +19,5 @@ Schedule::command('offers:expire')->daily();
 /**
  * Clear live streams every 30 minutes
  */
-Schedule::command('livestreams:clear')->everySecond();
+Schedule::command('livestreams:clear')->everyThirtyMinutes();
 
